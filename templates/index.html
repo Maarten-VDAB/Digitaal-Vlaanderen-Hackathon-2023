@@ -7,6 +7,7 @@
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
+    <script src="{{ url_for('static', path='/js/language.js') }}"></script>
 
     <script type='text/javascript'>
 
@@ -111,37 +112,6 @@
                 language_select_title.innerHTML = 'Select your language'
                 language_select_form.appendChild(language_select_title)
 
-                // create a map with the languages
-                var languages = {
-                    "nl": "Nederlands",
-                    "fr": "Français",
-                    "en": "English",
-                    "de": "Deutsch",
-                    "sp": "Español",
-                    "it": "Italiano",
-                    "tr": "Türkçe",
-                    "ar": "العربية",
-                    "pl": "Polski",
-                    "ru": "Русский",
-                    "ro": "Română",
-                    "el": "Ελληνικά",
-                    "po": "Português",
-                    "da": "Dansk",
-                    "sv": "Svenska",
-                    "no": "Norsk",
-                    "fi": "Suomi",
-                    "hu": "Magyar",
-                    "cs": "Čeština",
-                    "bg": "Български",
-                    "zh": "中文",
-                    "ja": "日本語",
-                    "ko": "한국어",
-                    "hi": "हिन्दी",
-                    "ur": "اردو",
-                    "fa": "فارسی",
-                    "th": "ไทย",
-                    "vi": "Tiếng Việt",
-                }
 
                 // create a set of the first two characters of each value that exsits in navigator.languages
                 var navigator_languages = new Set()
@@ -222,63 +192,7 @@
 
             var client_language = sessionStorage.getItem("client_language")
 
-            if (client_language === "nl") {
-                client_language = 'Hallo, ik ben de chat-assistent van VDAB. Ik kan je helpen met vragen over onze website. Wat is je vraag?'
-            } else if (client_language === "fr") {
-                client_language = 'Bonjour, je suis l\'assistant de chat de VDAB. Je peux vous aider avec des questions sur notre site Web. Quelle est votre question?'
-            } else if (client_language === "en") {
-                client_language = 'Hello, I am the chat assistant of VDAB. I can help you with questions about our website. What is your question?'
-            } else if (client_language === "de") {
-                client_language = 'Hallo, ich bin der Chat-Assistent von VDAB. Ich kann Ihnen bei Fragen zu unserer Website helfen. Was ist deine Frage?'
-            } else if (client_language === "sp") {
-                client_language = 'Hola, soy el asistente de chat de VDAB. Puedo ayudarte con preguntas sobre nuestro sitio web. ¿Cuál es tu pregunta?'
-            } else if (client_language === "it") {
-                client_language = 'Ciao, sono l\'assistente di chat di VDAB. Posso aiutarti con domande sul nostro sito web. Qual è la tua domanda?'
-            } else if (client_language === "tr") {
-                client_language = 'Merhaba, ben VDAB\'ın sohbet asistanıyım. Web sitemizle ilgili sorularınıza yardımcı olabilirim. Sorunuz nedir?'
-            } else if (client_language === "ar") {
-                client_language = 'مرحبًا ، أنا مساعد الدردشة في VDAB. يمكنني مساعدتك في الأسئلة حول موقعنا على الويب. ما هو سؤالك؟'
-            } else if (client_language === "pl") {
-                client_language = 'Cześć, jestem asystentem czatu VDAB. Mogę pomóc Ci w pytaniach dotyczących naszej witryny. Jakie jest twoje pytanie?'
-            } else if (client_language === "ru") {
-                client_language = 'Привет, я чат-ассистент VDAB. Я могу помочь вам с вопросами о нашем веб-сайте. Какой у тебя вопрос?'
-            } else if (client_language === "ro") {
-                client_language = 'Bună, sunt asistentul de chat al VDAB. Vă pot ajuta cu întrebări despre site-ul nostru web. Care este întrebarea ta?'
-            } else if (client_language === "el") {
-                client_language = 'Γεια σας, είμαι ο βοηθός συνομιλίας του VDAB. Μπορώ να σας βοηθήσω με ερωτήσεις σχετικά με τον ιστότοπό μας. Ποια είναι η ερώτησή σας;'
-            } else if (client_language === "po") {
-                client_language = 'Olá, eu sou o assistente de bate-papo da VDAB. Posso ajudá-lo com perguntas sobre nosso site. Qual é a sua pergunta?'
-            } else if (client_language === "da") {
-                client_language = 'Hej, jeg er VDABs chatassistent. Jeg kan hjælpe dig med spørgsmål om vores hjemmeside. Hvad er dit spørgsmål?'
-            } else if (client_language === "sv") {
-                client_language = 'Hej, jag är VDABs chattassistent. Jag kan hjälpa dig med frågor om vår webbplats. Vad är din fråga?'
-            } else if (client_language === "no") {
-                client_language = 'Hei, jeg er VDABs chatassistent. Jeg kan hjelpe deg med spørsmål om nettstedet vårt. Hva er spørsmålet ditt?'
-            } else if (client_language === "fi") {
-                client_language = 'Hei, olen VDABin chat-assistentti. Voin auttaa sinua kysymyksissä verkkosivustostamme. Mikä on kysymyksesi?'
-            } else if (client_language === "hu") {
-                client_language = 'Szia, én vagyok a VDAB chat asszisztense. Segíthetek a webhelyünkkel kapcsolatos kérdésekben. Mi a kérdésed?'
-            } else if (client_language === "cs") {
-                client_language = 'Ahoj, jsem chatovací asistent VDAB. Můžu vám pomoci s otázkami týkajícími se našich webových stránek. Jaká je vaše otázka?'
-            } else if (client_language === "bg") {
-                client_language = 'Здравейте, аз съм чат асистент на VDAB. Мога да ви помогна с въпроси относно нашия уебсайт. Какъв е вашият въпрос?'
-            } else if (client_language === "zh") {
-                client_language = '你好，我是VDAB的聊天助手。我可以帮助您解决有关我们网站的问题。你的问题是什么？'
-            } else if (client_language === "ja") {
-                client_language = 'こんにちは、私はVDABのチャットアシスタントです。私たちのウェブサイトに関する質問にお答えします。あなたの質問は何ですか？'
-            } else if (client_language === "ko") {
-                client_language = '안녕하세요, 저는 VDAB의 채팅 어시스턴트입니다. 저희 웹 사이트에 관한 질문에 답변 드리겠습니다. 귀하의 질문은 무엇입니까?'
-            } else if (client_language === "hi") {
-                client_language = 'नमस्ते, मैं VDAB की चैट सहायक हूं। मैं हमारी वेबसाइट के बारे में पूछे गए सवालों में आपकी मदद कर सकता हूं। आपका सवाल क्या है?'
-            } else if (client_language === "ur") {
-                client_language = 'ہیلو، میں وی ڈی اے بی کا چیٹ اسسٹنٹ ہوں۔ میں ہماری ویب سائٹ کے بار'
-            } else if (client_language === "fa") {
-                client_language = 'سلام، من دستیار گفتگوی VDAB هستم. من می توانم به شما در مورد سوالات مربوط به وب سایت ما کمک کنم. سوال شما چیست؟'
-            } else if (client_language === "th") {
-                client_language = 'สวัสดีฉันเป็นผู้ช่วยแชทของ VDAB ฉันสามารถช่วยคุณได้เกี่ยวกับคำถามเกี่ยวกับเว็บไซต์ของเรา คำถามของคุณคืออะไร'
-            } else if (client_language === "vi") {
-                client_language = 'Xin chào, tôi là trợ lý trò chuyện của VDAB. Tôi có thể giúp bạn với các câu hỏi về trang web của chúng tôi. Câu hỏi của bạn là gì?'
-            };
+            client_language = welcome_message[client_language]
 
             // set the language
             chatbot_message(-1, client_language)
@@ -788,6 +702,13 @@
 
             });
 
+            $('#help_text').click(function () {
+                // slide toggle #content
+                toggle_vdab_website();
+
+            });
+
+
 
             //
             // History button
@@ -968,12 +889,14 @@
             <div id="website-bgl-10"></div>
         </div>
         <div id="slider">
-            <div id="slider_button" class="slider_button"></div>
+            <div id="slider_button" class="slider_button"></div><br />
+            <s id="help_text">Help?</s>
         </div>
     </div>
     <div id="container">
+        <div id="logo_bg"></div>
         <div id="header">
-            <h1>Chat-Assistent</h1>
+            <h1>VDAB-Assistent</h1>
         </div>
         <div id="body">
             <div id="chat-container">
@@ -1027,6 +950,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 
     <!-- <script src="{{url_for('static', path='/js/encode-audio.js')}}"></script>

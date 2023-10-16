@@ -152,6 +152,7 @@
 
                 // add in the language_select_background
                 language_select_background.appendChild(language_select_form)
+
             } else {
                 //
                 // init the history
@@ -160,7 +161,32 @@
                     init_history();
                 };
 
+                // set the language
+                set_front_end_language()
+
             }
+
+
+
+        }
+
+        function set_front_end_language() {
+
+            //
+            // language
+            //
+
+            // set the placeholder of the input-textarea
+            $('#input-textarea').attr("placeholder", language_input_placeholder[sessionStorage.getItem("client_language")]);
+            // set the text of the new-topic 
+            $('#new-topic-text').text(language_new_chat[sessionStorage.getItem("client_language")]);
+            $('#history-title-text').text(language_history[sessionStorage.getItem("client_language")]);
+            // loop over all the history-items and if the text is new chat, change it to the correct language
+            $('.history-item').each(function () {
+                if ($(this).text() === 'new chat') {
+                    $(this).text(language_new_chat[sessionStorage.getItem("client_language")]);
+                }
+            });
         }
         function detect_client_language_return(data) {
 
@@ -178,6 +204,8 @@
             //
             init_history()
 
+            // set the language
+            set_front_end_language()
         }
 
 
@@ -301,6 +329,7 @@
                 history_item.innerHTML = session
                 // set an attribute
                 history_item.setAttribute('session_id', data['session_ids'][i])
+                history_item.setAttribute('title', 'Open this Session.')
 
                 // if the current history == the active session, add a class
                 if (i === data['active_session']) {
@@ -450,6 +479,7 @@
                 // create the bot picture
                 var bot_message_logo = document.createElement('span');
                 bot_message_logo.classList.add('bot-message-logo');
+                bot_message_logo.setAttribute('title', 'VDAB-Assistent');
                 message_table_cell_1.appendChild(bot_message_logo);
 
                 // Fill in the text
@@ -828,7 +858,7 @@
 
 
             //
-            // Audio
+            // Audio - geen tijd :'(
             //
             // let mediaRecorder;
             // let audioChunks = [];
@@ -868,6 +898,8 @@
             // } else {
             //     console.error('getUserMedia not supported in this browser');
             // }
+
+
         });
     </script>
 
@@ -889,8 +921,8 @@
             <div id="website-bgl-10"></div>
         </div>
         <div id="slider">
-            <div id="slider_button" class="slider_button"></div><br />
-            <s id="help_text">Help?</s>
+            <div id="slider_button" alt="Switch page" class="slider_button"></div><br />
+            <s id="help_text">VDAB Chat</s>
         </div>
     </div>
     <div id="container">
@@ -904,7 +936,8 @@
                     <div id="chat-content">
                     </div>
                     <div id="chat-input">
-                        <div id="new-topic"><span id="new-topic-logo"></span><span id="new-topic-text">new topic</span>
+                        <div id="new-topic"><span title="New Topic" id="new-topic-logo"></span><span
+                                id="new-topic-text">new topic</span>
                         </div>
                         <div id="input-container">
                             <table id="input-container-table">
@@ -914,11 +947,11 @@
                                             <textarea id="input-textarea"
                                                 placeholder="Enter your text here..."></textarea>
                                         </td>
-                                        <td><span id="record"></span></td>
+                                        <td><span title="Record Audio" id="record"></span></td>
                                     </tr>
                                     <tr>
                                         <td style="width: 28px">
-                                            <label id="add_image"></label>
+                                            <label id="add_image" title="Add Image"></label>
                                             <input style="display: none;" type="file" id="imageInput" accept="image/*">
                                         </td>
                                         <td id="media-container">
@@ -934,7 +967,7 @@
                                         </td>
                                         <td id="char-counter"></td>
                                         <td style="width: 28px; padding-top: 14px; padding-right: 20px;">/4000</td>
-                                        <td style="width: 28px"><span id="send"></span></td>
+                                        <td style="width: 28px"><span id="send" title="Send Message"></span></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -946,7 +979,7 @@
                 <div id="history-title"><span id="history-title-img"></span><span id="history-title-text">Recent</span>
                 </div>
                 <div id="history-content">
-                    <div class="history-item">new chat</div>
+                    <div title="Open Session" class="history-item">new chat</div>
                 </div>
             </div>
         </div>

@@ -225,7 +225,7 @@ body {
 }
 
 #help_text {
-    width: 85px;
+    /* width: 85px;
     padding: 6px 20px;
     font-weight: 900;
     height: 30px;
@@ -233,16 +233,26 @@ body {
     margin-top: 170px;
     text-align: center;
     border-radius: 8px;
+    border: solid 1px #041847; */
+    width: 110px;
+    padding: 6px 0px;
+    font-weight: 900;
+    height: 30px;
+    margin-left: -128px;
+    margin-top: 170px;
+    text-align: center;
+    border-radius: 8px;
     border: solid 1px #041847;
 }
 
 .slider_button.active {
-    background-image: url(../images/slider_button.png);
+    /* background-image: url(../images/slider_button.png); */
+    background-image: url(../images/../images/chatbot_logo_3.png);
     width: 100px;
     height: 100px;
     border-radius: 250px;
-    margin-left: -120px;
-    border: solid 3px black;
+    margin-left: -180px;
+    /* border: solid 3px black; */
 }
 
 
@@ -460,7 +470,8 @@ body {
 
 #new-topic-text.hover-nt {
     display: block;
-    width: 150px;
+    width: 175px;
+    text-align: center;
 }
 
 #input-container-table {
@@ -538,7 +549,7 @@ body {
 }
 
 .bot-message-logo {
-    background-image: url(../images/chatbot-profile-pic.jpeg);
+    background-image: url(../images/chatbot_logo_3.png);
     width: 70px;
     height: 70px;
     background-position: 0px 0px;
@@ -548,6 +559,7 @@ body {
     margin-right: 10px;
     background-size: contain;
     border-radius: 8px;
+
 }
 
 .bot-message {

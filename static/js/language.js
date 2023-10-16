@@ -28,7 +28,65 @@ languages = {
     "id": "Bahasa Indonesia"
 }
 
-language_hirtory = {
+language_input_placeholder = {
+    "nl": "Type hier je bericth ...",
+    "fr": "Tapez votre message ici ...",
+    "de": "Geben Sie hier Ihre Nachricht ein ...",
+    "en": "Type your message here ...",
+    "it": "Digita qui il tuo messaggio ...",
+    "sp": "Escribe tu mensaje aquí ...",
+    "po": "Digite sua mensagem aqui ...",
+    "el": "Πληκτρολογήστε το μήνυμά σας εδώ ...",
+    "da": "Indtast din besked her ...",
+    "fi": "Kirjoita viestisi tähän ...",
+    "sv": "Skriv ditt meddelande här ...",
+    "no": "Skriv meldingen din her ...",
+    "tr": "Mesajınızı buraya yazın ...",
+    "ar": "اكتب رسالتك هنا ...",
+    "hi": "अपना संदेश यहां टाइप करें ...",
+    "pl": "Wpisz swoją wiadomość tutaj ...",
+    "uk": "Введіть своє повідомлення тут ...",
+    "cs": "Sem napište svou zprávu ...",
+    "hr": "Ovdje unesite svoju poruku ...",
+    "sk": "Sem napíšte svoju správu ...",
+    "ru": "Введите свое сообщение здесь ...",
+    "ro": "Introduceți mesajul dvs. aici ...",
+    "bg": "Въведете вашето съобщение тук ...",
+    "ja": "ここにメッセージを入力してください...",
+    "zh": "在此处输入您的消息...",
+    "ko": "여기에 메시지를 입력하십시오...",
+    "id": "Ketik pesan Anda di sini ..."
+}
+language_new_chat = {
+    'nl': 'Nieuwe chat',
+    'fr': 'Nouveau chat',
+    'de': 'Neuer Chat',
+    'en': 'New chat',
+    'it': 'Nuova chat',
+    'sp': 'Nuevo chat',
+    'po': 'Novo chat',
+    'el': 'Νέα συνομιλία',
+    'da': 'Ny chat',
+    'fi': 'Uusi chat',
+    'sv': 'Ny chatt',
+    'no': 'Ny chat',
+    'tr': 'Yeni sohbet',
+    'ar': 'دردشة جديدة',
+    'hi': 'नई चैट',
+    'pl': 'Nowy czat',
+    'uk': 'Новий чат',
+    'cs': 'Nový chat',
+    'hr': 'Nova chat',
+    'sk': 'Nový chat',
+    'ru': 'Новый чат',
+    'ro': 'Chat nou',
+    'bg': 'Нов чат',
+    'ja': '新しいチャット',
+    'zh': '新聊天',
+    'ko': '새로운 채팅',
+    'id': 'Obrolan baru'
+}
+language_history = {
     "nl": "Geschiedenis",
     "fr": "Histoire",
     "de": "Geschichte",
@@ -87,7 +145,7 @@ language_new_topic = {
     "id": "Topik baru"
 }
 
-welcome_message = {
+welcome_message_2 = {
     "nl": 'Hallo, <br/>ik ben de chat-assistent van VDAB.<br/>Ik kan je vragen beantwoorden over werken in Vlaanderen?',
     "fr": 'Bonjour, <br/>je suis l\'assistant de chat du VDAB.<br/>Je peux répondre à vos questions sur le travail en Flandre?',
     "de": 'Hallo, <br/>ich bin der Chat-Assistent des VDAB.<br/>Ich kann Ihre Fragen zur Arbeit in Flandern beantworten?',
@@ -115,4 +173,35 @@ welcome_message = {
     "zh": '你好，<br/>我是VDAB的聊天助手。<br/>我可以回答您有关在佛兰德工作的问题吗？',
     "ko": '안녕하세요, <br/>저는 VDAB의 채팅 어시스턴트입니다.<br/>플랑드르에서 일하는 것에 대한 질문에 답변 할 수 있습니까?',
     "id": 'Halo, <br/>saya asisten obrolan VDAB.<br/>Saya dapat menjawab pertanyaan Anda tentang bekerja di Flanders?'
+}
+
+
+welcome_message = {
+    "nl": 'Hallo, met welke vragen over werk of opleiding kan ik je helpen?',
+    "fr": 'Bonjour, quelles questions sur le travail ou la formation puis-je vous aider?',
+    "de": 'Hallo, mit welchen Fragen zu Arbeit oder Ausbildung kann ich Ihnen helfen?',
+    "en": 'Hello, what questions about work or training can I help you with?',
+    "it": 'Ciao, quali domande sul lavoro o sulla formazione posso aiutarti?',
+    "sp": 'Hola, ¿qué preguntas sobre el trabajo o la formación puedo ayudarte?',
+    "po": 'Olá, que perguntas sobre trabalho ou formação posso ajudar?',
+    "el": 'Γεια, ποιες ερωτήσεις σχετικά με την εργασία ή την κατάρτιση μπορώ να σας βοηθήσω;',
+    "da": 'Hej, hvilke spørgsmål om arbejde eller uddannelse kan jeg hjælpe dig med?',
+    "fi": 'Hei, mitä kysymyksiä työstä tai koulutuksesta voin auttaa sinua?',
+    "sv": 'Hej, vilka frågor om arbete eller utbildning kan jag hjälpa dig med?',
+    "no": 'Hei, hvilke spørsmål om arbeid eller utdanning kan jeg hjelpe deg med?',
+    "tr": 'Merhaba, iş veya eğitimle ilgili hangi sorulara yardımcı olabilirim?',
+    "ar": 'مرحبا، ما هي الأسئلة حول العمل أو التدريب التي يمكنني مساعدتك فيها؟',
+    "hi": 'नमस्ते, काम या प्रशिक्षण के बारे में कौन से प्रश्न मैं आपकी मदद कर सकता हूं?',
+    "pl": 'Cześć, jakie pytania dotyczące pracy lub szkolenia mogę ci pomóc?',
+    "uk": 'Привіт, які питання про роботу або навчання я можу вам допомогти?',
+    "cs": 'Ahoj, jaké otázky o práci nebo školení vám mohu pomoci?',
+    "hr": 'Bok, koje pitanje o poslu ili obuci mogu pomoći?',
+    "sk": 'Ahoj, aké otázky o práci alebo školení vám môžem pomôcť?',
+    "ru": 'Здравствуйте, какие вопросы о работе или обучении я могу вам помочь?',
+    "ro": 'Bună, ce întrebări despre muncă sau formare pot să te ajut?',
+    "bg": 'Здравейте, какви въпроси относно работата или обучението мога да ви помогна?',
+    "ja": 'こんにちは、仕事やトレーニングに関する質問は何ですか？',
+    "zh": '你好，有关工作或培训的问题是什么？',
+    "ko": '안녕하세요, 일 또는 교육에 관한 질문이 무엇입니까?',
+    "id": 'Halo, pertanyaan tentang pekerjaan atau pelatihan apa yang bisa saya bantu?'
 }

@@ -3,10 +3,10 @@
 
 <head>
     <title>VDAB - Hackathon 2023</title>
-    <link href="https://vdabchat.azurewebsites.net/static/css/my_style.css" rel="stylesheet">
+    <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
-    <script src="https://vdabchat.azurewebsites.net/static/js/language.js"></script>
+    <script src="{{ url_for('static', path='/js/language.js') }}"></script>
 
     <script type='text/javascript'>
 
@@ -186,6 +186,14 @@
                     $(this).text(language_new_chat[sessionStorage.getItem("client_language")]);
                 }
             });
+
+            // set the quick questions
+            $('#quick_question_1').text(quick_question_1[sessionStorage.getItem("client_language")]);
+            $('#quick_question_2').text(quick_question_2[sessionStorage.getItem("client_language")]);
+            $('#quick_question_3').text(quick_question_3[sessionStorage.getItem("client_language")]);
+            $('#quick_question_4').text(quick_question_4[sessionStorage.getItem("client_language")]);
+
+
         }
         function detect_client_language_return(data) {
 
@@ -550,13 +558,23 @@
         *  Send a message
         *
         */
-        function send_message() {
+        function send_message(e) {
 
 
             //
             // Put the current message in the chat-content
             //
-            var msg = $('#input-textarea').val();
+            var msg = '';
+            if (typeof e === 'undefined') {
+                msg = $('#input-textarea').val();
+            } else {
+                msg = e;
+            }
+
+            // fade out the quick question
+            $('#chat-faq').animate(150, function () {
+                $(this).css({ "display": "none", "animate": "0.5s", "transition": "0.5s" });
+            });
 
             // loop over all the images (if exists):
             var imageBase64DataArray = [];
@@ -598,6 +616,9 @@
             // clear the input-textarea
             $('#input-textarea').val('');
 
+            // add disabled class to input-textarea
+            $('#input-textarea').addClass('input-textarea-disabled');
+
             // reset the height of the input-textarea
             $('#input-textarea').css({ "height": "auto" });
 
@@ -624,6 +645,9 @@
 
             // scroll to the bottom of the chat-content
             $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+            // remove the disabled class from input-textarea ?
+            $('#input-textarea').removeClass('input-textarea-disabled');
 
         }
 
@@ -660,6 +684,13 @@
 
                 // welcome message
                 first_message()
+
+                // Show the quick questions
+                $('#chat-faq').fadeIn(150, function () {
+                    $(this).css({ "display": "block", "animate": "0.5s", "transition": "0.5s" });
+                });
+                // remove the class "input-textarea-disabled"
+                $('#input-textarea').removeClass('input-textarea-disabled');
 
                 // send the message to the server
                 ws_send({
@@ -855,6 +886,17 @@
                 $('#input-textarea').focus()
             });
 
+            //
+            // When click on quick question
+            //
+            $('.quick_question').click(function () {
+                // get the text of the quick question
+                var quick_question = $(this).text();
+
+
+                // send the message to the server
+                send_message(quick_question)
+            });
 
             //
             // Audio - geen tijd :'(
@@ -932,9 +974,22 @@
         <div id="body">
             <div id="chat-container">
                 <div>
-                    <div id="chat-content">
-                    </div>
+                    <div id="chat-content"></div>
+
                     <div id="chat-input">
+                        <div id="chat-faq">
+                            <div id="chat-faq-title">F.A.Q.</div>
+                            <table id="chat-faq-table">
+                                <tr>
+                                    <td class="quick_question" id="quick_question_1">a</td>
+                                    <td class="quick_question" id="quick_question_3">b</td>
+                                </tr>
+                                <tr>
+                                    <td class="quick_question" id="quick_question_2">c</td>
+                                    <td class="quick_question" id="quick_question_4">d</td>
+                                </tr>
+                            </table>
+                        </div>
                         <div id="new-topic"><span title="New Topic" id="new-topic-logo"></span><span
                                 id="new-topic-text">new topic</span>
                         </div>

@@ -351,7 +351,8 @@ body {
     border-radius: 8px;
     overflow-y: auto;
     box-shadow: 0px 1px 5px 1px #b6c5ca;
-    min-height: 400px;
+    min-height: 350px;
+    /* 400px */
     margin: 25px;
 }
 
@@ -458,7 +459,7 @@ body {
     float: inherit;
     filter: invert(1);
     margin-top: 6px;
-    margin-right: 12px;
+    margin-right: 0px;
 }
 
 #new-topic-text {
@@ -470,8 +471,10 @@ body {
 
 #new-topic-text.hover-nt {
     display: block;
-    width: 175px;
+    width: 160px;
     text-align: center;
+    animate: 0.5s;
+    transition: 0.5s;
 }
 
 #input-container-table {
@@ -729,4 +732,80 @@ s:hover:before {
     animation: animate 8s linear infinite;
     animate: 0.5s;
     transition: 0.5s;
+}
+
+
+#chat-faq {
+    display: block;
+}
+
+
+#chat-faq-title {
+    display: block;
+    margin-left: 70px;
+    font-weight: bolder;
+}
+
+
+#chat-faq-table {
+    margin-right: auto;
+    max-width: 85%;
+    width: 1280px;
+    margin-left: 70px;
+    position: relative;
+    border-spacing: 10px;
+    margin-top: -10px;
+    margin-bottom: 14px;
+}
+
+#chat-faq-table td {
+    padding: 10px;
+    cursor: pointer;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0px 1px 5px 1px #b6c5ca;
+
+}
+
+#chat-faq-table td:hover {
+    padding: 10px;
+    cursor: pointer;
+    background: #bbdbff40;
+    border-radius: 8px;
+    box-shadow: 0px 1px 5px 1px #b6c5ca;
+
+}
+
+.input-textarea-disabled {
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+    background: #f0f0f0 !important;
+    color: #888888 !important;
+}
+
+
+@media (max-width: 1420px) {
+    #chat-history {
+        width: 50px;
+        /* Change the width for screens narrower than 1750px */
+        animate: 0.5s;
+        transition: 0.5s;
+    }
+
+    #history-content {
+        display: none;
+        /* Change the width for screens narrower than 1750px */
+        animate: 0.5s;
+        transition: 0.5s;
+    }
+
+    #history-title-text {
+        display: none;
+        /* Change the width for screens narrower than 1750px */
+        animate: 0.5s;
+        transition: 0.5s;
+    }
+
+
+
 }

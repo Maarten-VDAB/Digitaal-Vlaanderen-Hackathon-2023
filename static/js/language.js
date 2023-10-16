@@ -1,3 +1,6 @@
+//
+// Default sentences
+//
 languages = {
     "nl": "Nederlands",
     "fr": "Français",
@@ -29,7 +32,7 @@ languages = {
 }
 
 language_input_placeholder = {
-    "nl": "Type hier je bericth ...",
+    "nl": "Type hier je bericht ...",
     "fr": "Tapez votre message ici ...",
     "de": "Geben Sie hier Ihre Nachricht ein ...",
     "en": "Type your message here ...",
@@ -43,15 +46,15 @@ language_input_placeholder = {
     "no": "Skriv meldingen din her ...",
     "tr": "Mesajınızı buraya yazın ...",
     "ar": "اكتب رسالتك هنا ...",
-    "hi": "अपना संदेश यहां टाइप करें ...",
+    "hi": "अपना संदेश यहां लिखें ...",
     "pl": "Wpisz swoją wiadomość tutaj ...",
     "uk": "Введіть своє повідомлення тут ...",
     "cs": "Sem napište svou zprávu ...",
-    "hr": "Ovdje unesite svoju poruku ...",
+    "hr": "Ovdje upišite svoju poruku ...",
     "sk": "Sem napíšte svoju správu ...",
     "ru": "Введите свое сообщение здесь ...",
     "ro": "Introduceți mesajul dvs. aici ...",
-    "bg": "Въведете вашето съобщение тук ...",
+    "bg": "Въведете съобщението си тук ...",
     "ja": "ここにメッセージを入力してください...",
     "zh": "在此处输入您的消息...",
     "ko": "여기에 메시지를 입력하십시오...",
@@ -205,3 +208,145 @@ welcome_message = {
     "ko": '안녕하세요, 일 또는 교육에 관한 질문이 무엇입니까?',
     "id": 'Halo, pertanyaan tentang pekerjaan atau pelatihan apa yang bisa saya bantu?'
 }
+
+
+
+
+quick_question_1 = {
+    "nl": "Kunnen jullie mij werk geven?",
+    "fr": "Pouvez-vous me donner du travail?",
+    "de": "Können Sie mir Arbeit geben?",
+    "en": "Can you give me work?",
+    "it": "Puoi darmi lavoro?",
+    "sp": "¿Puedes darme trabajo?",
+    "po": "Você pode me dar trabalho?",
+    "el": "Μπορείτε να μου δώσετε δουλειά;",
+    "da": "Kan du give mig arbejde?",
+    "fi": "Voitko antaa minulle työtä?",
+    "sv": "Kan du ge mig jobb?",
+    "no": "Kan du gi meg arbeid?",
+    "tr": "Bana iş verebilir misin?",
+    "ar": "هل يمكنك أن تعطيني عملا؟",
+    "hi": "क्या आप मुझे काम दे सकते हैं?",
+    "pl": "Czy możesz mi dać pracę?",
+    "uk": "Чи можете ви мені дати роботу?",
+    "cs": "Můžete mi dát práci?",
+    "hr": "Možete li mi dati posao?",
+    "sk": "Môžete mi dať prácu?",
+    "ru": "Вы можете дать мне работу?",
+    "ro": "Îmi poți da un loc de muncă?",
+    "bg": "Можете ли да ми дадете работа?",
+    "ja": "仕事をくれますか？",
+    "zh": "你能给我工作吗？",
+    "ko": "일을 줄 수 있니?",
+    "id": "Bisakah Anda memberi saya pekerjaan?"
+}
+
+quick_question_3 = {
+    "nl": "Ik wil een opleiding volgen.",
+    "fr": "Je veux suivre une formation.",
+    "de": "Ich möchte eine Ausbildung machen.",
+    "en": "I want to follow a training.",
+    "it": "Voglio seguire una formazione.",
+    "sp": "Quiero seguir una formación.",
+    "po": "Eu quero seguir um treinamento.",
+    "el": "Θέλω να ακολουθήσω μια εκπαίδευση.",
+    "da": "Jeg vil følge en træning.",
+    "fi": "Haluan seurata koulutusta.",
+    "sv": "Jag vill följa en utbildning.",
+    "no": "Jeg vil følge en opplæring.",
+    "tr": "Bir eğitim izlemek istiyorum.",
+    "ar": "أريد أن أتابع تدريبًا.",
+    "hi": "मैं प्रशिक्षण का पालन करना चाहता हूं।",
+    "pl": "Chcę podjąć szkolenie.",
+    "uk": "Я хочу пройти навчання.",
+    "cs": "Chci absolvovat školení.",
+    "hr": "Želim proći obuku.",
+    "sk": "Chcem absolvovať školenie.",
+    "ru": "Я хочу пройти обучение.",
+    "ro": "Vreau să urmez o instruire.",
+    "bg": "Искам да следвам обучение.",
+    "ja": "トレーニングを受けたい。",
+    "zh": "我想接受培训。",
+    "ko": "나는 훈련을 받고 싶다.",
+    "id": "Saya ingin mengikuti pelatihan."
+}
+
+quick_question_2 = {
+    "nl": "Wat betekent de brief die ik ontvangen heb? Wat moet ik hiermee doen?",
+    "fr": "Que signifie la lettre que j'ai reçue? Que dois-je faire avec ça?",
+    "de": "Was bedeutet der Brief, den ich erhalten habe? Was soll ich damit machen?",
+    "en": "What does the letter I received mean? What should I do with this?",
+    "it": "Cosa significa la lettera che ho ricevuto? Cosa devo fare con questo?",
+    "sp": "¿Qué significa la carta que recibí? ¿Qué debo hacer con esto?",
+    "po": "O que significa a carta que recebi? O que devo fazer com isso?",
+    "el": "Τι σημαίνει το γράμμα που έλαβα; Τι πρέπει να κάνω με αυτό;",
+    "da": "Hvad betyder brevet, jeg modtog? Hvad skal jeg gøre med dette?",
+    "fi": "Mitä kirje, jonka sain, tarkoittaa? Mitä minun pitäisi tehdä tämän kanssa?",
+    "sv": "Vad betyder brevet jag fick? Vad ska jag göra med det här?",
+    "no": "Hva betyr brevet jeg mottok? Hva skal jeg gjøre med dette?",
+    "tr": "Aldığım mektup ne anlama geliyor? Bunu ne yapmalıyım?",
+    "ar": "ماذا يعني الرسالة التي تلقيتها؟ ماذا يجب أن أفعل بهذا؟",
+    "hi": "मैंने जो पत्र प्राप्त किया है उसका क्या मतलब है? मैं इसके साथ क्या करूं?",
+    "pl": "Co oznacza list, który otrzymałem? Co mam z tym zrobić?",
+    "uk": "Що означає лист, який я отримав? Що мені з цим робити?",
+    "cs": "Co znamená dopis, který jsem obdržel? Co s tím mám dělat?",
+    "hr": "Što znači pismo koje sam primio? Što bih trebao s tim učiniti?",
+    "sk": "Čo znamená list, ktorý som dostal? Čo s tým mám robiť?",
+    "ru": "Что означает письмо, которое я получил? Что мне с этим делать?",
+    "ro": "Ce înseamnă scrisoarea pe care am primit-o? Ce ar trebui să fac cu asta?",
+    "bg": "Какво означава писмото, което получих? Какво трябва да направя с това?",
+    "ja": "私が受け取った手紙は何を意味しますか？これをどうすればいいですか？",
+    "zh": "我收到的信是什么意思？我该怎么办？",
+    "ko": "받은 편지는 무엇을 의미합니까? 이걸 어떻게 해야 하나요?",
+    "id": "Apa arti surat yang saya terima? Apa yang harus saya lakukan dengan ini?"
+}
+
+quick_question_4 = {
+    "nl": "Moet ik solliciteren voor de vacatures die VDAB mij gestuurd heeft?",
+    "fr": "Dois-je postuler pour les postes vacants que VDAB m'a envoyés?",
+    "de": "Muss ich mich für die Stellen bewerben, die VDAB mir geschickt hat?",
+    "en": "Do I have to apply for the vacancies that VDAB has sent me?",
+    "it": "Devo candidarmi per le posizioni vacanti che VDAB mi ha inviato?",
+    "sp": "¿Tengo que solicitar las vacantes que VDAB me ha enviado?",
+    "po": "Tenho que me candidatar às vagas que o VDAB me enviou?",
+    "el": "Πρέπει να υποβάλω αίτηση για τις κενές θέσεις που μου έστειλε το VDAB;",
+    "da": "Skal jeg søge de ledige stillinger, som VDAB har sendt mig?",
+    "fi": "Onko minun haettava VDAB: n lähettämiä avoimia työpaikkoja?",
+    "sv": "Måste jag ansöka om de lediga tjänster som VDAB har skickat till mig?",
+    "no": "Må jeg søke på ledige stillinger som VDAB har sendt meg?",
+    "tr": "VDAB tarafından bana gönderilen boş pozisyonlar için başvurmalı mıyım?",
+    "ar": "هل يجب علي التقدم للوظائف الشاغرة التي أرسلها لي VDAB؟",
+    "hi": "क्या मुझे वीडीएबी ने मुझे भेजे रिक्तियों के लिए आवेदन करना होगा?",
+    "pl": "Czy muszę aplikować na wakaty, które przysłał mi VDAB?",
+    "uk": "Чи повинен я подавати заявку на вакансії, які надіслав мені VDAB?",
+    "cs": "Musím se ucházet o volná místa, která mi VDAB poslala?",
+    "hr": "Mogu li se prijaviti za slobodna radna mjesta koja mi je VDAB poslao?",
+    "sk": "Musím sa uchádzať o voľné miesta, ktoré mi VDAB poslal?",
+    "ru": "Я должен подавать заявку на вакансии, которые мне прислал VDAB?",
+    "ro": "Trebuie să aplic pentru posturile vacante pe care mi le-a trimis VDAB?",
+    "bg": "Трябва ли да кандидатствам за свободните позиции, които ми е изпратил VDAB?",
+    "ja": "VDABが私に送った空き職に応募する必要がありますか？",
+    "zh": "我必须申请VDAB发送给我的空缺吗？",
+    "ko": "VDAB가 보낸 빈자리에 지원해야합니까?",
+    "id": "Haruskah saya melamar untuk lowongan yang dikirimkan VDAB?"
+}
+
+
+// Kunnen jullie mij werk geven?
+// Ik wil Nederlands leren
+// Wat betekent de brief die ik ontvangen heb? Wat moet ik hiermee doen? 
+// Moet ik solliciteren voor de vacatures die VDAB mij gestuurd heeft?
+// Ik wil een opleiding volgen
+// Ik wil me inschrijven bij VDAB
+// Moet ik solliciteren voor de vacatures die VDAB mij gestuurd heeft?
+// Kan ik Nederlands leren bij VDAB?
+// Ik weet niet welke job ik wil doen. Kunnen jullie mij helpen? 
+// Hoe kan ik mijn diploma laten erkennen in België?
+// Ik wil me inschrijven bij de VDAB, hoe doe ik dat?
+// Ik wil werken als zonnepaneel installateur, welke stappen moet ik ondernemen?
+// Waar kan ik terecht voor kinderopvang voor mijn dochter?
+// Heb ik recht op een uitkering in België?
+// Ik wil niet meer werken als taxichauffeur, wegens pijnlijke rug en wil weten wat wel nog mogelijk is.
+// Ik wil werken als zonnepaneel installateur, welke stappen moet ik ondernemen?
+// Ik zoek werk als ingenieur, welke stappen moet ik ondernemen?

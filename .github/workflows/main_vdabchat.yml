@@ -60,4 +60,4 @@ jobs:
         with:
           app-name: 'VDABchat'
           slot-name: 'Production'
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_309746210AE941B6BD781AFB3104EAC6 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_43A38DD309E54439861F34B4CD1E0B95 }}

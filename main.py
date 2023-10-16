@@ -359,7 +359,7 @@ def check_arg(args=None):
     parser = argparse.ArgumentParser(description='Start: Universal Sentence Encoder - API')
     parser.add_argument('-H', '--host', help='host ip', default='0.0.0.0')
     
-    parser.add_argument('-p', '--port',  help='port of the web server',  default='5000')
+    parser.add_argument('-p', '--port',  help='port of the web server',  default='8000')
 
     results = parser.parse_args(args)
     try:

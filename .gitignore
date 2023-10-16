@@ -1,2 +1,10 @@
 .venv/
 *.tmp
+/rag/data/
+/rag/db/
+/rag/files/
+
+*.key
+
+.DS_Store
+*.zip

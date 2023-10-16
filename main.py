@@ -87,7 +87,7 @@ user_db = {}
 app = FastAPI(
     title="Hackathon - Digitaal Vlaanderen"
 )
-app.config["PREFERRED_URL_SCHEME"] = "https"
+
 os.chdir(str(pathlib.Path(__file__).parent))
 app.mount("/static", StaticFiles(directory=f"static"), name="static")
 templates = Jinja2Templates(directory=f"templates")

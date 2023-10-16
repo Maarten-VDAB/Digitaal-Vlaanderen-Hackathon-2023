@@ -1,0 +1,11 @@
+azure-identity==1.14.0
+openai==0.27.7
+azure-search-documents==11.4.0b6
+azure-storage-blob==12.17.0
+python-dotenv==1.0.0
+streamlit==1.26.0
+python-dotenv==1.0.0
+fastapi== 0.103.2
+uvicorn== 0.23.2
+jinja2== 3.1.2
+

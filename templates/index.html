@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>VDAB - Hackathon 2023</title>
+    <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
+
+    <script type='text/javascript'>
+
+        /*
+        *  Constant global variables
+        */
+        const WEBS_SOCKET_PATH = `ws${window.location.href.substr(4,)}ws`;
+
+        /*
+        *  Create the user session id
+        */
+        function get_client_id() {
+            // Check if user_session is null
+            let client_id = sessionStorage.getItem("client_id");
+
+            if (client_id === null) {
+                // Set the value in localStorage
+                client_id = Math.floor(Math.random() * Date.now());
+                sessionStorage.setItem("client_id", `${client_id}`);
+
+            }
+            // return the client_id
+            return client_id
+        }
+
+        /*
+        *  Web-Socket
+        */
+        var tmp_client_id = get_client_id();
+        var ws = new WebSocket(`${WEBS_SOCKET_PATH}/${tmp_client_id}`);
+        ws.client_id = tmp_client_id; // a chrome session hack ...
+
+
+        // Receiving a message
+        ws.onmessage = function (event) {
+
+            // if event.data is a json object
+
+            try {
+                // Parse the data
+                var data = JSON.parse(event.data);
+
+                // direct the data to the correct function
+                if (data['request'] === 'new_user') {
+                    detect_client_language_return(data)
+                } else if (data['request'] === 'new_message') {
+                    send_message_return(data)
+                } else if (data['request'] === 'get_session_data') {
+                    init_history_return(data)
+                } else if (data['request'] === 'new_topic') {
+                    new_topic_return(data)
+                } else if (data['request'] === 'activate_topic') {
+                    activate_topic_return(data)
+                } else {
+                    console.log(event.data);
+                }
+            } catch (e) {
+                console.log(event.data);
+            };
+        }
+
+
+        // Send message
+        function ws_send(data) {
+            if (ws.readyState === WebSocket.OPEN) {
+                // WebSocket is open, send the message to the server
+                ws.send(JSON.stringify(data));
+            } else {
+                // WebSocket is not open yet, you can handle this case or queue messages for later.
+                console.log("WebSocket is not open.");
+            }
+        }
+
+
+
+        function detect_client_language() {
+            /*
+            * Detect the user language:
+            *  - If client_language is not set, ask the user to select a language.
+            *  - When the user selects a language, send a message to the server with the next information:
+            *      - request: new_user (because the user is new)
+            *      - client_language: the language the user selected
+            * */
+            if (sessionStorage.getItem("client_language") === null) {
+
+                // create a div background
+                var language_select_background = document.createElement('div')
+
+                // add a class to the div
+                language_select_background.classList.add('language-select-background')
+
+                // put the div in the body
+                document.body.appendChild(language_select_background)
+
+                // create a div form
+                var language_select_form = document.createElement('div')
+                language_select_form.classList.add('language-select-form')
+
+                // add a title: select your language
+                var language_select_title = document.createElement('h1')
+                language_select_title.classList.add('language-select-title')
+                language_select_title.innerHTML = 'Select your language'
+                language_select_form.appendChild(language_select_title)
+
+                // create a map with the languages
+                var languages = {
+                    "nl": "Nederlands",
+                    "fr": "Français",
+                    "en": "English",
+                    "de": "Deutsch",
+                    "sp": "Español",
+                    "it": "Italiano",
+                    "tr": "Türkçe",
+                    "ar": "العربية",
+                    "pl": "Polski",
+                    "ru": "Русский",
+                    "ro": "Română",
+                    "el": "Ελληνικά",
+                    "po": "Português",
+                    "da": "Dansk",
+                    "sv": "Svenska",
+                    "no": "Norsk",
+                    "fi": "Suomi",
+                    "hu": "Magyar",
+                    "cs": "Čeština",
+                    "bg": "Български",
+                    "zh": "中文",
+                    "ja": "日本語",
+                    "ko": "한국어",
+                    "hi": "हिन्दी",
+                    "ur": "اردو",
+                    "fa": "فارسی",
+                    "th": "ไทย",
+                    "vi": "Tiếng Việt",
+                }
+
+                // create a set of the first two characters of each value that exsits in navigator.languages
+                var navigator_languages = new Set()
+                for (const language of navigator.languages) {
+                    navigator_languages.add(language.substring(0, 2))
+                }
+
+
+                // loop over all the languages and add them as button to the form
+                for (const [key, value] of Object.entries(languages)) {
+
+                    // create a button
+                    var language_select_button = document.createElement('button')
+                    language_select_button.classList.add('language-select-button');
+
+                    // add an extra class if the language was in the navigator_languages
+                    if (navigator_languages.has(key)) {
+                        language_select_button.classList.add('language-select-button-browser-pref');
+                    }
+
+                    // add the text to the button
+                    language_select_button.innerHTML = value
+
+                    // add the button to the form
+                    language_select_form.appendChild(language_select_button)
+
+                    // add an event listener to the button, which get triggered when the user clicks on the button
+                    language_select_button.addEventListener('click', function () {
+
+                        // when the user has clicked on the button, send the data to the server
+                        ws_send({
+                            "request": 'new_user',
+                            "client_language": key
+                        })
+
+                    })
+                }
+
+                // add in the language_select_background
+                language_select_background.appendChild(language_select_form)
+            } else {
+                //
+                // init the history
+                //
+                ws.onopen = function () {
+                    init_history();
+                };
+
+            }
+        }
+        function detect_client_language_return(data) {
+
+            // set the user language in the session storage
+            sessionStorage.setItem("client_language", data['client_language']);
+            sessionStorage.setItem("client_id", `${ws.client_id}`);
+
+            // slide out
+            $('.language-select-background').fadeOut(300, function () {
+                $(this).remove();
+            });
+
+            //
+            // init the history
+            //
+            init_history()
+
+        }
+
+
+        /*
+        *
+        * Dummy Welcome message
+        * 
+        */
+
+        function first_message() {
+            // get the language code
+
+            var client_language = sessionStorage.getItem("client_language")
+
+            if (client_language === "nl") {
+                client_language = 'Hallo, ik ben de chat-assistent van VDAB. Ik kan je helpen met vragen over onze website. Wat is je vraag?'
+            } else if (client_language === "fr") {
+                client_language = 'Bonjour, je suis l\'assistant de chat de VDAB. Je peux vous aider avec des questions sur notre site Web. Quelle est votre question?'
+            } else if (client_language === "en") {
+                client_language = 'Hello, I am the chat assistant of VDAB. I can help you with questions about our website. What is your question?'
+            } else if (client_language === "de") {
+                client_language = 'Hallo, ich bin der Chat-Assistent von VDAB. Ich kann Ihnen bei Fragen zu unserer Website helfen. Was ist deine Frage?'
+            } else if (client_language === "sp") {
+                client_language = 'Hola, soy el asistente de chat de VDAB. Puedo ayudarte con preguntas sobre nuestro sitio web. ¿Cuál es tu pregunta?'
+            } else if (client_language === "it") {
+                client_language = 'Ciao, sono l\'assistente di chat di VDAB. Posso aiutarti con domande sul nostro sito web. Qual è la tua domanda?'
+            } else if (client_language === "tr") {
+                client_language = 'Merhaba, ben VDAB\'ın sohbet asistanıyım. Web sitemizle ilgili sorularınıza yardımcı olabilirim. Sorunuz nedir?'
+            } else if (client_language === "ar") {
+                client_language = 'مرحبًا ، أنا مساعد الدردشة في VDAB. يمكنني مساعدتك في الأسئلة حول موقعنا على الويب. ما هو سؤالك؟'
+            } else if (client_language === "pl") {
+                client_language = 'Cześć, jestem asystentem czatu VDAB. Mogę pomóc Ci w pytaniach dotyczących naszej witryny. Jakie jest twoje pytanie?'
+            } else if (client_language === "ru") {
+                client_language = 'Привет, я чат-ассистент VDAB. Я могу помочь вам с вопросами о нашем веб-сайте. Какой у тебя вопрос?'
+            } else if (client_language === "ro") {
+                client_language = 'Bună, sunt asistentul de chat al VDAB. Vă pot ajuta cu întrebări despre site-ul nostru web. Care este întrebarea ta?'
+            } else if (client_language === "el") {
+                client_language = 'Γεια σας, είμαι ο βοηθός συνομιλίας του VDAB. Μπορώ να σας βοηθήσω με ερωτήσεις σχετικά με τον ιστότοπό μας. Ποια είναι η ερώτησή σας;'
+            } else if (client_language === "po") {
+                client_language = 'Olá, eu sou o assistente de bate-papo da VDAB. Posso ajudá-lo com perguntas sobre nosso site. Qual é a sua pergunta?'
+            } else if (client_language === "da") {
+                client_language = 'Hej, jeg er VDABs chatassistent. Jeg kan hjælpe dig med spørgsmål om vores hjemmeside. Hvad er dit spørgsmål?'
+            } else if (client_language === "sv") {
+                client_language = 'Hej, jag är VDABs chattassistent. Jag kan hjälpa dig med frågor om vår webbplats. Vad är din fråga?'
+            } else if (client_language === "no") {
+                client_language = 'Hei, jeg er VDABs chatassistent. Jeg kan hjelpe deg med spørsmål om nettstedet vårt. Hva er spørsmålet ditt?'
+            } else if (client_language === "fi") {
+                client_language = 'Hei, olen VDABin chat-assistentti. Voin auttaa sinua kysymyksissä verkkosivustostamme. Mikä on kysymyksesi?'
+            } else if (client_language === "hu") {
+                client_language = 'Szia, én vagyok a VDAB chat asszisztense. Segíthetek a webhelyünkkel kapcsolatos kérdésekben. Mi a kérdésed?'
+            } else if (client_language === "cs") {
+                client_language = 'Ahoj, jsem chatovací asistent VDAB. Můžu vám pomoci s otázkami týkajícími se našich webových stránek. Jaká je vaše otázka?'
+            } else if (client_language === "bg") {
+                client_language = 'Здравейте, аз съм чат асистент на VDAB. Мога да ви помогна с въпроси относно нашия уебсайт. Какъв е вашият въпрос?'
+            } else if (client_language === "zh") {
+                client_language = '你好，我是VDAB的聊天助手。我可以帮助您解决有关我们网站的问题。你的问题是什么？'
+            } else if (client_language === "ja") {
+                client_language = 'こんにちは、私はVDABのチャットアシスタントです。私たちのウェブサイトに関する質問にお答えします。あなたの質問は何ですか？'
+            } else if (client_language === "ko") {
+                client_language = '안녕하세요, 저는 VDAB의 채팅 어시스턴트입니다. 저희 웹 사이트에 관한 질문에 답변 드리겠습니다. 귀하의 질문은 무엇입니까?'
+            } else if (client_language === "hi") {
+                client_language = 'नमस्ते, मैं VDAB की चैट सहायक हूं। मैं हमारी वेबसाइट के बारे में पूछे गए सवालों में आपकी मदद कर सकता हूं। आपका सवाल क्या है?'
+            } else if (client_language === "ur") {
+                client_language = 'ہیلو، میں وی ڈی اے بی کا چیٹ اسسٹنٹ ہوں۔ میں ہماری ویب سائٹ کے بار'
+            } else if (client_language === "fa") {
+                client_language = 'سلام، من دستیار گفتگوی VDAB هستم. من می توانم به شما در مورد سوالات مربوط به وب سایت ما کمک کنم. سوال شما چیست؟'
+            } else if (client_language === "th") {
+                client_language = 'สวัสดีฉันเป็นผู้ช่วยแชทของ VDAB ฉันสามารถช่วยคุณได้เกี่ยวกับคำถามเกี่ยวกับเว็บไซต์ของเรา คำถามของคุณคืออะไร'
+            } else if (client_language === "vi") {
+                client_language = 'Xin chào, tôi là trợ lý trò chuyện của VDAB. Tôi có thể giúp bạn với các câu hỏi về trang web của chúng tôi. Câu hỏi của bạn là gì?'
+            };
+
+            // set the language
+            chatbot_message(-1, client_language)
+        }
+
+
+        /*
+        *
+        *  Open and close the chat history
+        *
+        */
+        function toggle_chat_history() {
+            /*
+            Collapse chat history
+
+            When the user clicks on the chat history title, the chat history will collapse
+            if the user clicks on the chat history title again, the chat history will expand
+            */
+            if ($('#chat-history').width() === 50) {
+                $('#chat-history').animate({
+                    width: 250
+                });
+                $('#history-content').css({ "display": "block" });
+                $('#history-title-text').css({ "display": "block" });
+
+
+            } else {
+                $('#history-content').css({ "display": "none" });
+                $('#history-title-text').css({ "display": "none" });
+
+                $('#chat-history').animate({
+                    width: 50
+                });
+            }
+        }
+
+        /*
+        *
+        *  Open and close the VDAB website
+        *
+        */
+
+        function toggle_vdab_website() {
+            /*
+            Slide to the fake VDAB website
+
+            When the user clicks on the slider button, the fake VDAB website will slide in
+            if the user clicks on the slider button again, the fake VDAB website will slide out
+            */
+
+            // Check if the website is active
+            var is_active = $("#vdab-website").hasClass('active')
+            if (is_active == false) {
+                $("#vdab-website").toggleClass("active");
+            }
+            // slide the website in or out
+            $('#website').animate({ 'width': 'toggle' });
+
+            // change the slider button image
+            $(".slider_button").toggleClass("active");
+
+            //toggle the class
+            if (is_active) {
+                $("#vdab-website").toggleClass("active");
+            }
+
+        }
+
+
+        /*
+        *
+        *  Count the amount of characters in the input-textarea
+        *
+        */
+        function char_counter() {
+            var text_length = $('#input-textarea').val().length;
+            $('#char-counter').text(text_length);
+            if (text_length > 4000) {
+                $('#char-counter').css({ "color": "red" });
+            } else {
+                $('#char-counter').css({ "color": "black" });
+            }
+        }
+
+
+
+        /*
+        *
+        *  Fill in the chat history, while loading the page
+        *
+        */
+
+        function fill_history(data) {
+            /*
+            *
+            * Fill in the history-content
+            * 
+            */
+            $('#history-content').empty()
+            var i = 0;
+            for (const session of data['title_sessions']) {
+
+                // create a div
+                var history_item = document.createElement('div')
+                history_item.classList.add('history-item')
+                history_item.innerHTML = session
+                // set an attribute
+                history_item.setAttribute('session_id', data['session_ids'][i])
+
+                // if the current history == the active session, add a class
+                if (i === data['active_session']) {
+                    history_item.classList.add('history-item-active')
+                }
+
+                // add an event listener to the div
+                history_item.addEventListener('click', function () {
+
+                    // if it has the class history-item-active, do nothing
+                    if (this.classList.contains('history-item-active')) {
+                        console.log('already active')
+                        return;
+                    }
+
+                    // remove the class history-item-active from the previous active item
+                    $('.history-item-active').removeClass('history-item-active')
+
+                    // send the message to the server
+                    ws_send({
+                        "request": 'activate_topic',
+                        "session_id": this.getAttribute('session_id')
+                    })
+                })
+
+                // add the div to the history-content
+                $('#history-content').prepend(history_item)
+                i++;
+            }
+        }
+
+        function activate_topic_return(data) {
+            //
+            // Fill in the chat-content
+            //
+
+            // get all the history-items
+            console.log(data)
+            for (const history_item of document.getElementsByClassName('history-item')) {
+                console.log(history_item.getAttribute('session_id'))
+                // check if the session_id of the history_item matches with our click
+                if (history_item.getAttribute('session_id') == data['active_session']) {
+                    // if so, add the class history-item-active
+                    history_item.classList.add('history-item-active')
+                }
+            }
+
+            // fill in the content
+            fill_content(data)
+
+        }
+        function fill_content(data) {
+            /*
+            *
+            * Fill in the chat-content
+            *
+            */
+            $('#chat-content').empty()
+            for (const msg of data['session']['conversation']) {
+                if (msg['role'] == "user") {
+
+                    // TODO: misschien msg aanpassen zodanig dat het weet dat het een afbeelding is
+
+                    console.log(msg['content'])
+                    user_message(msg['content'])
+
+                } else {
+                    // count the amount of "class="message bot-message" classes
+                    var msg_count = document.getElementsByClassName('message bot-message').length
+                    if (msg_count === 0) {
+                        first_message()
+                    } else {
+                        chatbot_message(msg_count, msg['content'])
+                    }
+                }
+            }
+
+            // scroll to the bottom of the chat-content
+            $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+        }
+
+        function init_history() {
+            //
+            // Ask the webserver for its latest active session 
+            // if the value is -1, we'll create default item
+            //
+            ws_send({
+                "request": 'get_session_data'
+            });
+        }
+
+        function init_history_return(data) {
+            //
+            // update the history
+            //
+            if (data['title_sessions'].length === 0) {
+                first_message()
+                return;
+            }
+
+            //
+            // Fill in the recent history
+            //
+            fill_history(data)
+
+
+            //
+            // Fill in the chat-content
+            //
+            fill_content(data)
+
+        }
+
+        /*
+        *
+        *  Chatbot message
+        *
+        */
+        function chatbot_message(chatbot_msg_id, msg) {
+            /*
+              Form the chatbot message
+            */
+
+            // check if the "chatbot_msg_id" exists or not
+            if (document.getElementById(`chatbot-message-${chatbot_msg_id}`) == null) {
+
+                //
+                // Create the chatbot message
+                //
+
+                // put the message in the chat-content
+                var message = document.createElement('div');
+                message.classList.add('message');
+                message.classList.add('bot-message');
+
+                // create a table of two cells
+                var message_table = document.createElement('table');
+                var message_table_row = document.createElement('tr');
+                var message_table_cell_1 = document.createElement('td');
+                var message_table_cell_2 = document.createElement('td');
+                message_table_row.appendChild(message_table_cell_1);
+                message_table_row.appendChild(message_table_cell_2);
+                message_table.appendChild(message_table_row);
+                message.appendChild(message_table);
+
+                // create the bot picture
+                var bot_message_logo = document.createElement('span');
+                bot_message_logo.classList.add('bot-message-logo');
+                message_table_cell_1.appendChild(bot_message_logo);
+
+                // Fill in the text
+                message_table_cell_2.innerHTML = msg;
+                // add a id to the message
+                message_table_cell_2.id = `chatbot-message-${chatbot_msg_id}`;
+
+                // add the message to the chat-content
+                $('#chat-content').append(message);
+            } else {
+                // update the message
+                document.getElementById(`chatbot-message-${chatbot_msg_id}`).innerHTML += msg;
+            }
+        }
+        /*
+        *
+        *  User message
+        *
+        */
+
+        function user_message(msg) {
+            /*
+            Form the user message
+            */
+
+            // put the message in the chat-content
+            var message = document.createElement('div');
+            message.classList.add('message');
+            message.classList.add('user-message');
+
+
+            // create a inner div
+            var message_text = document.createElement('div');
+            message_text.classList.add('message-text');
+            message_text.innerHTML = msg;
+
+            // add the text to the outer div
+            message.appendChild(message_text);
+
+            // add the message to the chat-content
+            $('#chat-content').append(message);
+        }
+
+
+        /*
+        *
+        *  User image
+        *
+        */
+
+        function user_image(img) {
+            /*
+            Form the user message
+            */
+
+            // put the message in the chat-content
+            var message = document.createElement('div');
+            message.classList.add('message');
+            message.classList.add('user-image');
+            // add the background image
+            message.style.backgroundImage = `url(${img.src})`;
+            // add the message to the chat-content
+            $('#chat-content').append(message);
+        }
+
+
+        /*
+        *
+        *  Send a message
+        *
+        */
+        function send_message() {
+
+
+            //
+            // Put the current message in the chat-content
+            //
+            var msg = $('#input-textarea').val();
+
+            // loop over all the images (if exists):
+            var imageBase64DataArray = [];
+            var images = document.getElementsByClassName('media-thumbnail');
+            for (const image of images) {
+
+                // add the image to the message
+                var src = image.src;
+                // Check if the src attribute is a data URL
+                if (src && src.startsWith('data:image/')) {
+                    // Extract and store the base64-encoded data
+                    imageBase64DataArray.push(src);
+                }
+            }
+
+
+            // send the user message to the chat-content
+            if (msg.length > 0) {
+                user_message(msg)
+            }
+
+            // if images is not empty, send the images to the chat-content
+            for (const image of images) {
+                user_image(image)
+            }
+
+
+            console.log(imageBase64DataArray)
+            // send the message to the server
+            ws_send({
+                "request": 'new_message',
+                "msg": msg,
+                "images": imageBase64DataArray,
+            })
+
+            // clean the media-container
+            $('#media-container').empty()
+
+            // clear the input-textarea
+            $('#input-textarea').val('');
+
+            // reset the height of the input-textarea
+            $('#input-textarea').css({ "height": "auto" });
+
+            // reset the char counter
+            $('#char-counter').text('0');
+
+            // scroll to the bottom of the chat-content
+            $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+        }
+
+        function send_message_return(data) {
+
+            // check if data contains the key 'titles'
+            console.log(data)
+            if ("title_sessions" in data) {
+                // fill in the history
+                fill_history(data)
+            }
+
+            //
+            // add the repose of the chatbot to the chat-content
+            //
+            chatbot_message(data['msg-count'], data['msg'])
+
+            // scroll to the bottom of the chat-content
+            $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+        }
+
+
+
+        /*
+        *
+        * New Topic
+        * 
+        */
+        function new_topic() {
+
+
+            // count the amount of divs with class "user-message"
+            if (document.getElementsByClassName('user-message').length > 0) {
+
+                // empty chat-content
+                $('#chat-content').empty()
+
+                // clear the input-textarea
+                $('#input-textarea').val('');
+
+                // reset the height of the input-textarea
+                $('#input-textarea').css({ "height": "auto" });
+
+                // reset the char counter
+                $('#char-counter').text('0');
+
+                // scroll to the bottom of the chat-content
+                $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+                // remove the active class from the history-item
+                $('.history-item-active').removeClass('history-item-active')
+
+                // welcome message
+                first_message()
+
+                // send the message to the server
+                ws_send({
+                    "request": 'new_topic'
+                })
+            };
+
+        }
+
+        function new_topic_return(data) {
+            console.log(data)
+        }
+
+
+        //
+        // Image
+        //
+        function generateThumbnail(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    // Create an image element for the thumbnail
+                    var thumbnail = document.createElement('img');
+                    thumbnail.src = e.target.result;
+
+                    // Add the click event handler to open the image in a new tab
+
+                    thumbnail.addEventListener('click', function () {
+                        // Open the image in a new tab
+                        var newTab = window.open('', '_blank');
+                        newTab.document.write('<html><body><img src="' + thumbnail.src + '"></body></html>');
+                        newTab.document.close();
+                    });
+
+
+                    // add a class to the thumbnail
+                    thumbnail.classList.add('media-thumbnail');
+
+                    // Add the thumbnail to the thumbnail container
+                    document.getElementById('media-container').appendChild(thumbnail);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        //
+        // on document load
+        //
+
+        $(document).ready(function () {
+
+
+            //
+            // Language detection
+            //
+            detect_client_language()
+
+            //
+            // Button: VDAB-Website - Chat environment
+            //
+
+            // hide #content
+            $('#website').hide();
+            // on click on #slider
+            $('#slider_button').click(function () {
+                // slide toggle #content
+                toggle_vdab_website();
+
+            });
+
+
+            //
+            // History button
+            //
+            $('#history-title').click(function () {
+                toggle_chat_history();
+            });
+
+
+            //
+            // hover over new topic
+            //
+            $("#new-topic").hover(function () {
+                $('#new-topic-text').toggleClass("hover-nt");
+            });
+
+
+            //
+            // input-textarea
+            //
+
+            document.getElementById('input-textarea').addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
+
+            //
+            // Count the amount of characters in the input-textarea, it cannot exceed 4000
+            //
+            $('#input-textarea').keyup(function () {
+                char_counter()
+            });
+
+            //
+            // Toggle chat history
+            //
+            $("#chat-history-toggle").on("click", function () {
+                $("#chat-history").slideToggle();
+            });
+
+
+            //
+            // send a message to te server with the user language + user id
+            //
+
+            // when they hit enter
+            $('#input-textarea').keypress(function (e) {
+                // but not when shift + enter
+                if ((e.shiftKey === false) && (e.which === 13)) {
+
+                    // get the text of input-textarea
+                    var input_textarea = document.getElementById('input-textarea');
+
+                    // count all the thumbnails
+                    var images = document.getElementsByClassName('media-thumbnail');
+
+                    // get the user message
+                    var user_msgs = document.getElementsByClassName('user-message');
+
+                    // if there is no text and no images, do nothing
+                    if ((input_textarea.value.length === 0) && (images.length === 0)) {
+                        // avoid new line
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // if there is no and only one image, do nothing because we don't have not enough info
+                    console.log(user_msgs.length)
+                    console.log(images.length)
+                    if ((user_msgs.length === 0) && (images.length > 0) && (input_textarea.value.length === 0)) {
+
+                        // avoid new line
+                        alert('Please give use a bit more context before sending the image')
+
+                        e.preventDefault();
+                        return;
+                    }
+
+                    // evoid a new line
+                    e.preventDefault();
+
+
+                    // send the message to the server
+                    send_message()
+                }
+            });
+
+            // or when they click on the send button
+            $('#send').click(function () {
+                // send the message to the server
+                send_message()
+            });
+
+
+            //
+            // Click on new topic
+            //
+            $('#new-topic').click(function () {
+                // send the message to the server
+                new_topic()
+            });
+
+            //
+            // Click on add image
+            //
+            $('#add_image').click(function () {
+                // click on the imageInput
+                $('#imageInput').click()
+
+            });
+
+            $('#imageInput').change(function () {
+                generateThumbnail(this);
+                // focus on the input-textarea
+                $('#input-textarea').focus()
+            });
+
+
+            //
+            // Audio
+            //
+            // let mediaRecorder;
+            // let audioChunks = [];
+
+            // if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            //     // Edge and modern browsers
+            //     navigator.mediaDevices.getUserMedia({ audio: true })
+            //         .then(function (stream) {
+            //             mediaRecorder = new MediaRecorder(stream);
+
+            //             mediaRecorder.ondataavailable = function (e) {
+            //                 if (e.data.size > 0) {
+            //                     audioChunks.push(e.data);
+            //                 }
+            //             };
+
+            //             mediaRecorder.onstop = function () {
+            //                 const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+            //                 const audioUrl = URL.createObjectURL(audioBlob);
+            //                 $('#audioPlayer').attr('src', audioUrl);
+            //                 audioChunks = [];
+            //             };
+
+            //             $('#recordButton').click(function () {
+            //                 if (mediaRecorder.state === 'inactive') {
+            //                     mediaRecorder.start();
+            //                     $('#recordButton').text('Stop');
+            //                 } else {
+            //                     mediaRecorder.stop();
+            //                     $('#recordButton').text('Record');
+            //                 }
+            //             });
+            //         })
+            //         .catch(function (err) {
+            //             console.error('Error accessing microphone:', err);
+            //         });
+            // } else {
+            //     console.error('getUserMedia not supported in this browser');
+            // }
+        });
+    </script>
+
+
+</head>
+
+<body>
+    <div id="vdab-website">
+        <div id="website">
+            <div id="website-bgl-1"></div>
+            <div id="website-bgl-2"></div>
+            <div id="website-bgl-3"></div>
+            <div id="website-bgl-4"></div>
+            <div id="website-bgl-5"></div>
+            <div id="website-bgl-6"></div>
+            <div id="website-bgl-7"></div>
+            <div id="website-bgl-8"></div>
+            <div id="website-bgl-9"></div>
+            <div id="website-bgl-10"></div>
+        </div>
+        <div id="slider">
+            <div id="slider_button" class="slider_button"></div>
+        </div>
+    </div>
+    <div id="container">
+        <div id="header">
+            <h1>Chat-Assistent</h1>
+        </div>
+        <div id="body">
+            <div id="chat-container">
+                <div>
+                    <div id="chat-content">
+                    </div>
+                    <div id="chat-input">
+                        <div id="new-topic"><span id="new-topic-logo"></span><span id="new-topic-text">new topic</span>
+                        </div>
+                        <div id="input-container">
+                            <table id="input-container-table">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4">
+                                            <textarea id="input-textarea"
+                                                placeholder="Enter your text here..."></textarea>
+                                        </td>
+                                        <td><span id="record"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width: 28px">
+                                            <label id="add_image"></label>
+                                            <input style="display: none;" type="file" id="imageInput" accept="image/*">
+                                        </td>
+                                        <td id="media-container">
+                                            <!--                                             
+                                            <div>
+                                                <button type="button" id="buttonStart">Start</button>
+                                                <button type="button" id="buttonStop" disabled>Stop</button>
+                                            </div>
+                                            <div>
+                                                <audio controls id="audio"></audio>
+                                            </div> -->
+
+                                        </td>
+                                        <td id="char-counter"></td>
+                                        <td style="width: 28px; padding-top: 14px; padding-right: 20px;">/4000</td>
+                                        <td style="width: 28px"><span id="send"></span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="chat-history">
+                <div id="history-title"><span id="history-title-img"></span><span id="history-title-text">Recent</span>
+                </div>
+                <div id="history-content">
+                    <div class="history-item">new chat</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- <script src="{{url_for('static', path='/js/encode-audio.js')}}"></script>
+    <script src="{{ url_for('static', path='/js/audio.js') }}"></script> -->
+</body>
+
+</html>

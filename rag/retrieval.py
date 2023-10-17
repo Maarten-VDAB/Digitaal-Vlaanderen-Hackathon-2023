@@ -31,7 +31,7 @@ class VDABRetrieverClient:
         search_type: str | None = "similarity_score_threshold",
         threshold: float | None = 0.3,
         filter: dict[str, Any] | None = {},
-        k: int | None = 6,
+        k: int | None = 3,
     ) -> ParentDocumentRetriever:
         with open(DB_PATH / "store.pickle", "rb") as f:
             documentstore = pickle.load(f)
@@ -57,7 +57,7 @@ class VDABRetrieverClient:
         search_type: str | None = "similarity_score_threshold",
         threshold: float | None = 0.3,
         filter: dict[str, Any] | None = {},
-        k: int | None = 6,
+        k: int | None = 3,
     ) -> None:
         vectorstore = Chroma(
             collection_name="full_documents",

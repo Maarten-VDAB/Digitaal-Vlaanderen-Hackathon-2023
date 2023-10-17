@@ -1,8 +1,9 @@
 """Define tools for the LLM to use."""
-
 from langchain.retrievers import ParentDocumentRetriever
 from langchain.tools import BaseTool
 from fastapi import WebSocket
+
+from schemas import ChatResponse
 
 class RAGTool(BaseTool):
     """Look through the vector store to answer general questions."""
@@ -38,35 +39,30 @@ class RAGTool(BaseTool):
         if not self.retriever:
             raise ValueError("Vector store not loaded")
         docs = self.retriever.get_relevant_documents(query)
-        # TODO: reenable this to show links
-        # doc_links_and_titles = [
-        #     (doc.metadata.get("url", ""), doc.metadata.get("title", ""))
-        #     for doc in docs
-        #     if doc.metadata.get("url")
-        # ]
-        # # only keep the tuples if the title is unique
-        # doc_links_and_titles = list(
-        #     {title: link for link, title in doc_links_and_titles}.items()
-        # )
-        # # swap back to link, title
-        # doc_links_and_titles = [(link, title) for title, link in doc_links_and_titles]
+        
+        doc_links = [(doc.metadata.get("url", ""), doc.metadata.get("title", "link not found"))  for doc in docs]
+        print([doc.metadata.keys() for doc in docs])
 
-        # link_string = "See the following relevant links: <br><br>"
-        # for link, title in doc_links_and_titles:
-        #     link_string += (
-        #         '<a href="' + link + '" target="_blank">' + title + "</a><br>"
-            # )
-        # end_resp = ChatResponse(sender="bot", message="", type="end")
-        # await self.websocket.send_json(end_resp.dict())
+        link_string = "See the following relevant links: <br><br>"
+        for link, title in doc_links:
+            print(link)
+            print(title)
+            new_link = link.replace("-rel1ldv.ops", "")
+            link_string += (
+                '<a href="' + new_link + '" target="_blank">' + new_link + "</a><br>"
+            )
+        end_resp = ChatResponse(sender="bot", message="", type="end")
+        await self.websocket.send_json(end_resp.dict())
 
-        # bot_resp = ChatResponse(sender="bot", message=link_string, type="stream")
-        # await self.websocket.send_json(bot_resp.dict())
+        bot_resp = ChatResponse(sender="bot", message=link_string, type="stream")
+        await self.websocket.send_json(bot_resp.dict())
 
-        # end_resp = ChatResponse(sender="bot", message="", type="end")
-        # await self.websocket.send_json(end_resp.dict())
+        end_resp = ChatResponse(sender="bot", message="", type="end")
+        await self.websocket.send_json(end_resp.dict())
 
-        # start_resp = ChatResponse(sender="bot", message="", type="start")
-        # await self.websocket.send_json(start_resp.dict())
+        start_resp = ChatResponse(sender="bot", message="", type="start")
+        await self.websocket.send_json(start_resp.dict())
+        
         return "".join(doc.page_content + "\n" for doc in docs)
     
         

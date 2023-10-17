@@ -148,11 +148,11 @@ language_new_topic = {
     "id": "Topik baru"
 }
 
-welcome_message_2 = {
-    "nl": 'Hallo, <br/>ik ben de chat-assistent van VDAB. <br/>Ik gebruik AI om u te helpen. <br/>Ik kan je vragen beantwoorden over werken in Vlaanderen.',
+welcome_message = {
+    "nl": 'Hallo, ik ben de chat-assistent van VDAB. Ik gebruik AI om u te helpen. Ik kan je vragen beantwoorden over werken in Vlaanderen.',
     "fr": 'Bonjour, <br/>je suis l\'assistant de chat du VDAB.<br/>Je peux répondre à vos questions sur le travail en Flandre.',
     "de": 'Hallo, <br/>ich bin der Chat-Assistent des VDAB.<br/>Ich kann Ihre Fragen zur Arbeit in Flandern beantworten.',
-    "en": 'Hello, <br/>I am the chat assistant of VDAB.<br/>I use AI to help you. <br/>I can answer your questions about working in Flanders.',
+    "en": 'Hello, I am the chat assistant of VDAB. I use AI to help you. I can answer your questions about working in Flanders.',
     "it": 'Ciao, <br/>sono l\'assistente di chat del VDAB.<br/>Posso rispondere alle tue domande sul lavoro in Fiandre.',
     "sp": 'Hola, <br/>soy el asistente de chat de VDAB.<br/>Puedo responder tus preguntas sobre trabajar en Flandes.',
     "po": 'Olá, <br/>sou o assistente de chat do VDAB.<br/>Posso responder às suas perguntas sobre trabalhar na Flandres.',
@@ -165,7 +165,7 @@ welcome_message_2 = {
     "ar": 'مرحبا, <br/>أنا مساعد الدردشة في VDAB.<br/>أستطيع الإجابة على أسئلتك حول العمل في فلاندرز؟',
     "hi": 'नमस्ते, <br/>मैं VDAB का चैट सहायक हूं।<br/>मैं फ्लांडर्स में काम करने के बारे में आपके सवालों का जवाब दे सकता हूं.',
     "pl": 'Cześć, <br/>jestem asystentem czatu VDAB.<br/>Mogę odpowiedzieć na Twoje pytania dotyczące pracy w Flandrii.',
-    "uk": 'Привіт, <br/>я чат-асистент VDAB.<br/>Я використовую ШІ, щоб допомогти вам. <br/>Я можу відповісти на ваші питання про роботу в Фландрах.',
+    "uk": 'Привіт, я чат-асистент VDAB. Я використовую ШІ, щоб допомогти вам. Я можу відповісти на ваші питання про роботу в Фландрах.',
     "cs": 'Ahoj, <br/>jsem chatovací asistent VDAB.<br/>Můžu odpovědět na vaše otázky týkající se práce ve Flandrech.',
     "hr": 'Bok, <br/>ja sam chat asistent VDAB-a.<br/>Mogu odgovoriti na vaša pitanja o radu u Flandriji.',
     "sk": 'Ahoj, <br/>som chatovací asistent VDAB.<br/>Môžem odpovedať na vaše otázky týkajúce sa práce vo Flandrii.',
@@ -179,7 +179,7 @@ welcome_message_2 = {
 }
 
 
-welcome_message = {
+welcome_message_2 = {
     "nl": 'Hallo, met welke vragen over werk of opleiding kan ik je helpen?',
     "fr": 'Bonjour, quelles questions sur le travail ou la formation puis-je vous aider?',
     "de": 'Hallo, mit welchen Fragen zu Arbeit oder Ausbildung kann ich Ihnen helfen?',
@@ -273,10 +273,10 @@ quick_question_3 = {
 }
 
 quick_question_2 = {
-    "nl": "Wat betekent de brief die ik ontvangen heb? Wat moet ik hiermee doen?",
+    "nl": "Ik heb een brief ontvangen die ik niet begrijp.",
     "fr": "Que signifie la lettre que j'ai reçue? Que dois-je faire avec ça?",
     "de": "Was bedeutet der Brief, den ich erhalten habe? Was soll ich damit machen?",
-    "en": "What does the letter I received mean? What should I do with this?",
+    "en": "I received a letter I don't understand.",
     "it": "Cosa significa la lettera che ho ricevuto? Cosa devo fare con questo?",
     "sp": "¿Qué significa la carta que recibí? ¿Qué debo hacer con esto?",
     "po": "O que significa a carta que recebi? O que devo fazer com isso?",
@@ -289,7 +289,7 @@ quick_question_2 = {
     "ar": "ماذا يعني الرسالة التي تلقيتها؟ ماذا يجب أن أفعل بهذا؟",
     "hi": "मैंने जो पत्र प्राप्त किया है उसका क्या मतलब है? मैं इसके साथ क्या करूं?",
     "pl": "Co oznacza list, który otrzymałem? Co mam z tym zrobić?",
-    "uk": "Що означає лист, який я отримав? Що мені з цим робити?",
+    "uk": "Я отримав лист, якого не розумію.",
     "cs": "Co znamená dopis, který jsem obdržel? Co s tím mám dělat?",
     "hr": "Što znači pismo koje sam primio? Što bih trebao s tim učiniti?",
     "sk": "Čo znamená list, ktorý som dostal? Čo s tým mám robiť?",

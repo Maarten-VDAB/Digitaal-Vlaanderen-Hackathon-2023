@@ -1,6 +1,9 @@
 #---------------#
 # Load packages #
 #---------------#
+import os
+import re
+os.environ["OPENAI_API_KEY"] = "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"
 from typing import Optional, Any, List
 import requests
 from contextlib import asynccontextmanager
@@ -141,7 +144,7 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-@app.websocket("/chat")
+@app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await websocket.accept()
     stream_handler = StreamingLLMCallbackHandler(websocket)
@@ -151,27 +154,53 @@ async def websocket_endpoint(websocket: WebSocket):
     )
     while True:
         try:
-            question = await websocket.receive_text()
-            # Receive and send back the client message
-            qa_chain, memory = get_agent(
-                stream_handler,
-                websocket,
-                observations,
-                retriever=retrievers[0],
-                memory=memory,
-            )
-            resp = ChatResponse(sender="you", message=question, type="stream")
-            await websocket.send_json(resp.dict())
 
-            # Construct a response
-            start_resp = ChatResponse(sender="bot", message="", type="start")
-            await websocket.send_json(start_resp.dict())
-            result = await qa_chain.acall(
-                {"input": question, "stored_observations": observations}
-            )
-            print(result)
-            end_resp = ChatResponse(sender="bot", message="", type="end")
-            await websocket.send_json(end_resp.dict())
+            # Get the data
+            data = await websocket.receive_json()
+            data['client_id'] = websocket.client.port
+
+            # response placeholder
+            response = {'client_id': data['client_id'], 'request': data['request']}
+
+
+            pprint(data)
+            if data['request'] == 'new_user':
+                response.update(new_user(data, websocket))
+                await manager.send_personal_json(response, websocket)
+
+
+            elif data['request'] == 'get_session_data':
+                response.update(get_session_data(data))
+                await manager.send_personal_json(response, websocket)
+
+            elif data['request'] == 'new_message':
+                await new_message(data, response, manager, websocket)
+
+            elif True:
+
+                print('SHIIIIIIIIIIIIT')
+                # Receive and send back the client message
+                qa_chain, memory = get_agent(
+                    stream_handler,
+                    websocket,
+                    observations,
+                    retriever=retrievers[0],
+                    memory=memory,
+                )
+
+                question = "hallo"
+                resp = ChatResponse(sender="you", message=question, type="stream")
+                await websocket.send_json(resp.dict())
+
+                # Construct a response
+                start_resp = ChatResponse(sender="bot", message="", type="start")
+                await websocket.send_json(start_resp.dict())
+                result = await qa_chain.acall(
+                    {"input": question, "stored_observations": observations}
+                )
+                print(result)
+                end_resp = ChatResponse(sender="bot", message="", type="end")
+                await websocket.send_json(end_resp.dict())
         except WebSocketDisconnect:
             logging.info("websocket disconnect")
             break
@@ -238,23 +267,35 @@ async def get(request: Request):
         else:
             website_name = "localhost:8000"
         return templates.TemplateResponse(
-            "index_dummy.html",
-            {"request": request, "insert_endpoint": "ws://" + website_name + "/chat"},
+            "index.html",
+            {"request": request, "insert_endpoint": "ws://" + website_name + "/ws"},
         )
 
 
 #----------#
 # Requests #
 #----------#
-def new_user(data: dict[str:Any]) -> dict[str|Any]:
+def new_user(data: dict[str:Any], websocket:Any) -> dict[str|Any]:
     """
         Create a new user
     """
+
+    stream_handler = StreamingLLMCallbackHandler(websocket)
+    observations = []
+    qa_chain, memory = get_agent(
+        stream_handler, websocket, observations, retriever=retrievers[0]
+    )
+
+
     user_db[data['client_id']] = {'client_language': data['client_language'], 
                                   'last_activity': datetime.datetime.now(), 
                                   'active_session': None,
                                   'sessions': [{'title': None,
-                                                'conversation':[{"role": "system", "content": SYSTEM_MESSAGE}]
+                                                'conversation':[{"role": "system", "content": SYSTEM_MESSAGE}],
+                                                'stream_handler': stream_handler,
+                                                'observations': observations,
+                                                'qa_chain': qa_chain,
+                                                'memory': memory
                                                 }]}
     
     return {'client_language': data['client_language']}
@@ -298,6 +339,7 @@ def get_session_data(data: dict[str:Any]) -> dict[str|Any]:
         # return the session titles 
         # + the id of the active session
         # + the old conversation
+        # TODO: de historiek
         return {'title_sessions': [x['title'] for x in client_data['sessions']],
                 'session_ids': list(range(len(client_data['sessions']))),
                 'active_session': client_data['active_session'],
@@ -335,24 +377,25 @@ async def new_message(data: dict[str:Any], response: dict[str:Any], manager: Any
 
     # load the images
     images = []
-    for e, raw_image in enumerate(data['images']):
+    #pprint(data['image'])
+    # for e, raw_image in enumerate(data['pdf']):
 
-        if len(raw_image) < 100:
-            continue
+    #     if len(raw_image) < 100:
+    #         continue
 
-        # get the image
-        image_path = raw_image.split(';base64,',1)
-        image_bytes =  base64.b64decode(image_path[1])
+    #     # get the image
+    #     image_path = raw_image.split(';base64,',1)
+    #     image_bytes =  base64.b64decode(image_path[1])
 
-        # convert to image
-        image = Image.open(BytesIO(image_bytes))
+    #     # convert to image
+    #     image = Image.open(BytesIO(image_bytes))
 
-        # write image to file, if you want temp folder?
-        # image.save(f'temp_{e}.{image_path[0].rsplit("/",1)[-1]}')
+    #     # write image to file, if you want temp folder?
+    #     # image.save(f'temp_{e}.{image_path[0].rsplit("/",1)[-1]}')
 
-        # convert to numpy array
-        images.append(np.array(image))
-        print(f'Image shape: {images[-1].shape}')
+    #     # convert to numpy array
+    #     images.append(np.array(image))
+    #     print(f'Image shape: {images[-1].shape}')
 
     # get the client data
     client_data = user_db[data['client_id']]
@@ -367,49 +410,67 @@ async def new_message(data: dict[str:Any], response: dict[str:Any], manager: Any
 
     # add the client / user message to the session
     client_data['sessions'][session_id]['conversation'].append({"role": "user", "content" : msg})
-    client_data['sessions'][session_id]['conversation'].append({"role": "assistent", "content" : ''})
+    client_data['sessions'][session_id]['conversation'].append({"role": "assistent", "content" : 'Done'})
 
     # set the last activity date
     client_data['last_activity'] = datetime.datetime.now()
 
 
     # get the message
-    text = ''
+    if client_data['sessions'][session_id]['title'] is None:
+        # set the title
+        # client_data['sessions'][session_id]['title'] = text[:23].capitalize()
+        client_data['sessions'][session_id]['title'] = msg[:23].capitalize()
+        await websocket.send_json({'request': 'edit_title', 
+                                   'title_sessions': [x['title'] for x in client_data['sessions']],
+                                   "session_ids" : list(range(len(client_data['sessions'])))})
 
-    # Get all the chunks
-    for chunk in get_chatbot_response(client_data['sessions'][session_id]['conversation'][:-1]):
-        if len(chunk.get('choices',[])) == 0:
-            continue
-        if chunk['choices'][0].get('delta',{}).get('content') is None:
-            continue
-
-        # get the word
-        word = chunk['choices'][0]['delta']['content']
-        text += word
-
-        # create the response
-        data = {'msg': word, 
-                "msg-count": len(client_data['sessions'][session_id]['conversation']),
-                'client_id': response['client_id'],
-                'active_session': client_data['active_session'],
-                'request': response['request']
-                }
-
-        if (len(text) > 23) and (client_data['sessions'][session_id]['title'] is None):
-
-            # set the title
-            # client_data['sessions'][session_id]['title'] = text[:23].capitalize()
-            client_data['sessions'][session_id]['title'] = msg[:23].capitalize()
-
-            # Add update the titles
-            data["title_sessions"] = [x['title'] for x in client_data['sessions']]
-            data["session_ids"] = list(range(len(client_data['sessions'])))
+    # Construct a response
+    start_resp = ChatResponse(sender="bot", message="", type="start").model_dump()
+    await websocket.send_json(start_resp)
 
 
+    result = await client_data['sessions'][session_id]['qa_chain'].acall({"input": msg, "stored_observations": client_data['sessions'][session_id]['observations']})
 
-        # update the conversation
-        client_data['sessions'][session_id]['conversation'][-1]['content'] += word
-        await manager.send_personal_json(data, websocket)
+
+    end_resp = ChatResponse(sender="bot", message="", type="end").model_dump()
+    await websocket.send_json(end_resp)
+
+
+    # # Get all the chunks
+    # for chunk in get_chatbot_response(client_data['sessions'][session_id]['conversation'][:-1]):
+    #     if len(chunk.get('choices',[])) == 0:
+    #         continue
+    #     if chunk['choices'][0].get('delta',{}).get('content') is None:
+    #         continue
+
+    #     # get the word
+    #     word = chunk['choices'][0]['delta']['content']
+    #     text += word
+
+    #     # create the response
+    #     data = {'msg': word, 
+    #             "msg-count": len(client_data['sessions'][session_id]['conversation']),
+    #             'client_id': response['client_id'],
+    #             'active_session': client_data['active_session'],
+    #             'request': response['request']
+    #             }
+
+    #     if (len(text) > 23) and (client_data['sessions'][session_id]['title'] is None):
+
+    #         # set the title
+    #         # client_data['sessions'][session_id]['title'] = text[:23].capitalize()
+    #         client_data['sessions'][session_id]['title'] = msg[:23].capitalize()
+
+    #         # Add update the titles
+    #         data["title_sessions"] = [x['title'] for x in client_data['sessions']]
+    #         data["session_ids"] = list(range(len(client_data['sessions'])))
+
+
+
+    #     # update the conversation
+    #     client_data['sessions'][session_id]['conversation'][-1]['content'] += word
+    #     await manager.send_personal_json(data, websocket)
 
 
 

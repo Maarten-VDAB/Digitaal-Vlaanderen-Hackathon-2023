@@ -13,7 +13,7 @@
         /*
         *  Constant global variables
         */
-        const WEBS_SOCKET_PATH = `ws${window.location.href.substr(4,)}ws`;
+        // const WEBS_SOCKET_PATH = `ws${window.location.href.substr(4,)}ws`;
 
         /*
         *  Create the user session id
@@ -36,7 +36,12 @@
         *  Web-Socket
         */
         var tmp_client_id = get_client_id();
-        var ws = new WebSocket(`${WEBS_SOCKET_PATH}/${tmp_client_id}`);
+
+        var endpoint = "{{ insert_endpoint }}";
+        var ws = new WebSocket(endpoint);
+
+
+        //var ws = new WebSocket(`${WEBS_SOCKET_PATH}/${tmp_client_id}`);
         ws.client_id = tmp_client_id; // a chrome session hack ...
 
 
@@ -52,7 +57,7 @@
                 // direct the data to the correct function
                 if (data['request'] === 'new_user') {
                     detect_client_language_return(data)
-                } else if (data['request'] === 'new_message') {
+                } else if ("sender" in data) {
                     send_message_return(data)
                 } else if (data['request'] === 'get_session_data') {
                     init_history_return(data)
@@ -60,6 +65,8 @@
                     new_topic_return(data)
                 } else if (data['request'] === 'activate_topic') {
                     activate_topic_return(data)
+                } else if (data['request'] === 'edit_title') {
+                    edit_title(data)
                 } else {
                     console.log(event.data);
                 }
@@ -151,11 +158,11 @@
 
                 // add in the language_select_background
                 language_select_background.appendChild(language_select_form)
-
             } else {
                 //
                 // init the history
                 //
+                console.log('init history');
                 ws.onopen = function () {
                     init_history();
                 };
@@ -200,7 +207,6 @@
             // set the user language in the session storage
             sessionStorage.setItem("client_language", data['client_language']);
             sessionStorage.setItem("client_id", `${ws.client_id}`);
-
             // slide out
             $('.language-select-background').fadeOut(300, function () {
                 $(this).remove();
@@ -374,7 +380,6 @@
             //
 
             // get all the history-items
-            console.log(data)
             for (const history_item of document.getElementsByClassName('history-item')) {
                 console.log(history_item.getAttribute('session_id'))
                 // check if the session_id of the history_item matches with our click
@@ -560,6 +565,16 @@
         */
         function send_message(e) {
 
+            //
+            // Set the balloon id
+            //
+            if (sessionStorage.getItem("message_id") === null) {
+                sessionStorage.setItem("message_id", 1);
+            }
+            else {
+                sessionStorage.setItem("message_id", parseInt(sessionStorage.getItem("message_id")) + 1);
+            }
+
 
             //
             // Put the current message in the chat-content
@@ -631,17 +646,12 @@
 
         function send_message_return(data) {
 
-            // check if data contains the key 'titles'
-            console.log(data)
-            if ("title_sessions" in data) {
-                // fill in the history
-                fill_history(data)
-            }
+
 
             //
             // add the repose of the chatbot to the chat-content
             //
-            chatbot_message(data['msg-count'], data['msg'])
+            chatbot_message(sessionStorage.getItem("message_id"), data['message'])
 
             // scroll to the bottom of the chat-content
             $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
@@ -652,6 +662,13 @@
         }
 
 
+        function edit_title(data) {
+            // check if data contains the key 'titles'
+            if ("title_sessions" in data) {
+                // fill in the history
+                fill_history(data)
+            }
+        }
 
         /*
         *
@@ -709,22 +726,24 @@
         // Image
         //
         function generateThumbnail(input) {
+
             if (input.files && input.files[0]) {
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
                     // Create an image element for the thumbnail
                     var thumbnail = document.createElement('img');
-                    thumbnail.src = e.target.result;
+                    thumbnail.src = "/static/images/pdf.png"
+                    //thumbnail.src = e.target.result;
 
                     // Add the click event handler to open the image in a new tab
 
-                    thumbnail.addEventListener('click', function () {
-                        // Open the image in a new tab
-                        var newTab = window.open('', '_blank');
-                        newTab.document.write('<html><body><img src="' + thumbnail.src + '"></body></html>');
-                        newTab.document.close();
-                    });
+                    // thumbnail.addEventListener('click', function () {
+                    //     // Open the image in a new tab
+                    //     var newTab = window.open('', '_blank');
+                    //     newTab.document.write('<html><body><img src="' + thumbnail.src + '"></body></html>');
+                    //     newTab.document.close();
+                    // });
 
 
                     // add a class to the thumbnail
@@ -742,7 +761,6 @@
         //
 
         $(document).ready(function () {
-
 
             //
             // Language detection
@@ -874,13 +892,13 @@
             //
             // Click on add image
             //
-            $('#add_image').click(function () {
-                // click on the imageInput
-                $('#imageInput').click()
+            $('#add_pdf').click(function () {
+                // click on the pdfInput
+                $('#pdfInput').click()
 
             });
 
-            $('#imageInput').change(function () {
+            $('#pdfInput').change(function () {
                 generateThumbnail(this);
                 // focus on the input-textarea
                 $('#input-textarea').focus()
@@ -897,6 +915,12 @@
                 // send the message to the server
                 send_message(quick_question)
             });
+
+
+
+
+
+
 
             //
             // Audio - geen tijd :'(
@@ -1005,8 +1029,8 @@
                                     </tr>
                                     <tr>
                                         <td style="width: 28px">
-                                            <label id="add_image" title="Add Image"></label>
-                                            <input style="display: none;" type="file" id="imageInput" accept="image/*">
+                                            <label id="add_pdf" title="Add PDF"></label>
+                                            <input style="display: none;" type="file" id="pdfInput" accept=".pdf">
                                         </td>
                                         <td id="media-container">
                                             <!--                                             

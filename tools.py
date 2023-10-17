@@ -68,3 +68,34 @@ class RAGTool(BaseTool):
         # start_resp = ChatResponse(sender="bot", message="", type="start")
         # await self.websocket.send_json(start_resp.dict())
         return "".join(doc.page_content + "\n" for doc in docs)
+    
+        
+
+class ContactInfoTool(BaseTool):
+    """Return contact information VDAB when no more answers can be found."""
+
+    name = "ContactInfo"
+    description = (
+        "useful for when the question is about anything else than VDAB."
+        "Even if you know the answer, if the question is not about VDAB, use this tool."
+    )
+
+    def _run(
+        self,
+        query: str,
+    ) -> str:
+        """Use the tool."""
+        pass
+
+    
+    async def _arun(self, query: str,) -> str:
+        """Use the tool."""
+        return """
+            I am not sure I can help you further. It may be best to contact VDAB directly.
+            The service number of VDAB is 0800 30 700. It is available everyday from 8am until 4h30pm.
+            You can also chat with a person at the VDAB site https://www.vdab.be/contact.
+            More information can also be found on the VDAB site. 
+            You can translate this site to your own language by following these steps:
+            TODO.
+        """
+

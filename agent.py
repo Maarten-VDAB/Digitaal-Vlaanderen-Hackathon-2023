@@ -13,7 +13,7 @@ from langchain.chat_models.openai import ChatOpenAI
 from langchain.prompts import MessagesPlaceholder
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 
-from tools import RAGTool
+from tools import RAGTool, ContactInfoTool
 from prompts import SYSTEM_MESSAGE
 
 
@@ -33,6 +33,7 @@ def get_agent(
             k=5, memory_key="chat_history", input_key="input", return_messages=True
         )
     tools = [
+        ContactInfoTool(),
         RAGTool(
             retriever=retriever,
             websocket=websocket,

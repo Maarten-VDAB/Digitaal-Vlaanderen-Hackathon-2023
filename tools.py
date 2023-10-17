@@ -164,12 +164,7 @@ Gesprekken zijn opvolgingsgesprekken zoals bedoeld in het Besluit van de Vlaamse
 arbeidsbemiddeling en de beroepsopleiding. Opdrachten zijn afspraken zoals bedoeld in datzelfde besluit.
 Plaats hieronder je handtekening als je bemiddelaar het vraagt. 
 Opgemaakt op dinsdag 17 oktober 2023 om 12:27.
-Handtekening werkzoekende Handtekening bemiddelaar
-Plaats 
-je handtekening 
-in het voor jou 
-voorziene vakje
-Mina Mina    
+Er is al een afspraak gemaakt met de VDAB bemiddelaar dus je moet geen afspraak meer maken. 
 2/2"""
     # async def _arun(self, query: str,) -> str:
     #     """Use the tool."""

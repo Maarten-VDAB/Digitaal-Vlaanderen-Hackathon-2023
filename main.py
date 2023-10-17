@@ -32,6 +32,7 @@ from rag.retrieval import VDABRetrieverClient
 from agent import get_agent
 from callback import StreamingLLMCallbackHandler
 from schemas import ChatResponse
+from prompts import SYSTEM_MESSAGE
 
 #---------------#
 # Open AI stuff #

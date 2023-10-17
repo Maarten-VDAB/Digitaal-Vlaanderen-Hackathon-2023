@@ -3,13 +3,13 @@
 
 <head>
     <title>VDAB - Hackathon 2023</title>
-    <!-- <link href="https://vdabhackathon.azurewebsites.net/css/my_style.css" rel="stylesheet"> -->
 
     <link href="https://vdabhackathon.azurewebsites.net/static/css/my_style.css" rel="stylesheet">
-
     <!-- <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet"> -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
+
     <!-- <script src="{{ url_for('static', path='/js/language.js') }}"></script> -->
     <script src="https://vdabhackathon.azurewebsites.net/static/js/language.js"></script>
 
@@ -103,7 +103,9 @@
             *      - request: new_user (because the user is new)
             *      - client_language: the language the user selected
             * */
-            if (sessionStorage.getItem("client_language") === null) {
+            // if (sessionStorage.getItem("client_language") === null) {
+            if (true) {
+                sessionStorage.clear();
 
                 // create a div background
                 var language_select_background = document.createElement('div')
@@ -197,6 +199,7 @@
             $('.history-item').each(function () {
                 if ($(this).text() === 'new chat') {
                     $(this).text(language_new_chat[sessionStorage.getItem("client_language")]);
+
                 }
             });
 
@@ -238,7 +241,6 @@
             // get the language code
 
             var client_language = sessionStorage.getItem("client_language")
-
             client_language = welcome_message[client_language]
 
             // set the language
@@ -338,6 +340,7 @@
             * Fill in the history-content
             * 
             */
+            console.log(data)
             $('#history-content').empty()
             var i = 0;
             for (const session of data['title_sessions']) {
@@ -384,7 +387,7 @@
             //
             // Fill in the chat-content
             //
-
+            console.log(data)
             // get all the history-items
             for (const history_item of document.getElementsByClassName('history-item')) {
                 console.log(history_item.getAttribute('session_id'))
@@ -405,23 +408,21 @@
             * Fill in the chat-content
             *
             */
-            $('#chat-content').empty()
+            $('#chat-content').empty();
+            first_message();
+            var msg_count = -2;
             for (const msg of data['session']['conversation']) {
                 if (msg['role'] == "user") {
 
-                    // TODO: misschien msg aanpassen zodanig dat het weet dat het een afbeelding is
+                    user_message(msg['content']);
 
-                    console.log(msg['content'])
-                    user_message(msg['content'])
+                } else if (msg['role'] == "pdf") {
+                    pdf_image()
 
                 } else {
                     // count the amount of "class="message bot-message" classes
-                    var msg_count = document.getElementsByClassName('message bot-message').length
-                    if (msg_count === 0) {
-                        first_message()
-                    } else {
-                        chatbot_message(msg_count, msg['content'])
-                    }
+                    chatbot_message(msg_count, msg['content']);
+                    msg_count--
                 }
             }
 
@@ -471,6 +472,8 @@
             /*
               Form the chatbot message
             */
+            // replace \n with <br>
+            msg = msg.replace(/\n/g, "<br>");
 
             // check if the "chatbot_msg_id" exists or not
             if (document.getElementById(`chatbot-message-${chatbot_msg_id}`) == null) {
@@ -494,14 +497,30 @@
                 message_table.appendChild(message_table_row);
                 message.appendChild(message_table);
 
+
                 // create the bot picture
                 var bot_message_logo = document.createElement('span');
                 bot_message_logo.classList.add('bot-message-logo');
                 bot_message_logo.setAttribute('title', 'VDAB-Assistent');
                 message_table_cell_1.appendChild(bot_message_logo);
 
+
+
                 // Fill in the text
-                message_table_cell_2.innerHTML = msg;
+
+                if (chatbot_msg_id < 0) {
+                    message_table_cell_2.innerHTML = msg;
+                } else {
+                    // Add an image whivh is a webp gif
+                    var bot_message_gif = document.createElement('img');
+                    bot_message_gif.classList.add('bot-message-gif');
+                    bot_message_gif.src = "/static/images/load_text.webp";
+                    // set the id of the image
+                    bot_message_gif.id = 'bot-message-loading';
+                    message_table_cell_2.appendChild(bot_message_gif);
+
+                }
+
                 // add a id to the message
                 message_table_cell_2.id = `chatbot-message-${chatbot_msg_id}`;
 
@@ -548,7 +567,7 @@
         *
         */
 
-        function user_image(img) {
+        function pdf_image() {
             /*
             Form the user message
             */
@@ -558,9 +577,9 @@
             message.classList.add('message');
             message.classList.add('user-image');
             // add the background image
-            message.style.backgroundImage = `url(${img.src})`;
+            //message.style.backgroundImage = `url(${img.src})`;
             // add the message to the chat-content
-            $('#chat-content').append(message);
+            $('#chat-content').append(message)
         }
 
 
@@ -611,7 +630,6 @@
                 }
             }
 
-            console.log(pdfs)
             // send the user message to the chat-content
             if (msg.length > 0) {
                 user_message(msg)
@@ -619,17 +637,20 @@
 
             // if images is not empty, send the images to the chat-content
             for (const image of images) {
-                user_image(image)
+                pdf_image()
             }
 
 
-            console.log(imageBase64DataArray)
             // send the message to the server
             ws_send({
                 "request": 'new_message',
                 "msg": msg,
                 "images": imageBase64DataArray,
             })
+
+            // 
+            // $('#input-textarea').addClass('input-textarea-disabled');
+
 
             // clean the media-container
             $('#media-container').empty()
@@ -648,12 +669,27 @@
 
             // scroll to the bottom of the chat-content
             $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
+
+            // add the opacity class to:
+            $('#send').addClass('opacity');
+            $('#record').addClass('opacity');
+            $('#new-topic').addClass('opacity');
+            // if add_pdf doesn't contain the class opacity, add it
+            if (!$('#add_pdf').hasClass('opacity')) {
+                $('#add_pdf').addClass('opacity');
+            };
         }
 
         function send_message_return(data) {
 
 
+            // if it is the start of the messagen clean td
 
+            if (data["type"] === 'stream') {
+                if (document.contains(document.getElementById('bot-message-loading'))) {
+                    document.getElementById("bot-message-loading").remove();
+                }
+            }
             //
             // add the repose of the chatbot to the chat-content
             //
@@ -662,8 +698,19 @@
             // scroll to the bottom of the chat-content
             $('#chat-content').scrollTop($('#chat-content')[0].scrollHeight);
 
-            // remove the disabled class from input-textarea ?
-            $('#input-textarea').removeClass('input-textarea-disabled');
+            // open the chat history again
+            if (data["type"] === 'end') {
+
+                // remove the disabled class from input-textarea ?
+                $('#input-textarea').removeClass('input-textarea-disabled');
+
+                // remove the opacity class from:
+                $('#send').removeClass('opacity');
+                $('#record').removeClass('opacity');
+                $('#new-topic').removeClass('opacity');
+                $('#add_pdf').removeClass('opacity');
+            }
+
 
         }
 
@@ -687,6 +734,8 @@
             // count the amount of divs with class "user-message"
             if (document.getElementsByClassName('user-message').length > 0) {
 
+
+
                 // empty chat-content
                 $('#chat-content').empty()
 
@@ -705,6 +754,13 @@
                 // remove the active class from the history-item
                 $('.history-item-active').removeClass('history-item-active')
 
+                // clean the media-container
+                $('#media-container').empty()
+
+                // if add_pdf contains the class opacity, remove it
+                if ($('#add_pdf').hasClass('opacity')) {
+                    $('#add_pdf').removeClass('opacity');
+                };
                 // welcome message
                 first_message()
 
@@ -767,7 +823,8 @@
 
                 //     reader.readAsDataURL(input.files[0]);
 
-
+                // add the class opacity to the add_pdf button
+                $('#add_pdf').addClass('opacity');
 
 
                 // var reader = new FileReader();
@@ -900,12 +957,12 @@
                     }
 
                     // if there is no and only one image, do nothing because we don't have not enough info
-                    console.log(user_msgs.length)
-                    console.log(images.length)
-                    if ((user_msgs.length === 0) && (images.length > 0) && (input_textarea.value.length === 0)) {
+
+                    //if ((user_msgs.length === 0) && (images.length > 0) && (input_textarea.value.length === 0)) {
+                    if ((images.length > 0) && (input_textarea.value.length < 3)) {
 
                         // avoid new line
-                        alert('Please give use a bit more context before sending the image')
+                        alert(language_pdf[sessionStorage.getItem("client_language")])
 
                         e.preventDefault();
                         return;

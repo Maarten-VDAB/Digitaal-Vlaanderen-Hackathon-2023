@@ -524,6 +524,13 @@ body {
     opacity: 0.4;
 }
 
+.opacity {
+    opacity: 0.4;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
+
+
 #send:hover {
     opacity: 0.4;
 }
@@ -592,7 +599,7 @@ body {
 
 
 .user-image {
-    background-image: url(../images/user-profile-pic.png);
+    background-image: url(../images/pdf.png);
     border-radius: 8px;
     box-shadow: 1px 2px 2px 1px #535f6261;
     max-width: 300px;
@@ -789,6 +796,14 @@ s:hover:before {
     color: #888888 !important;
 }
 
+.bot-message-gif {
+    height: 30px;
+}
+
+/* The second td of the table */
+.bot-message td:nth-child(2) {
+    min-width: 40px;
+}
 
 @media (max-width: 1420px) {
     #chat-history {

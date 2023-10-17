@@ -175,6 +175,15 @@ async def websocket_endpoint(websocket: WebSocket):
             elif data['request'] == 'new_message':
                 await new_message(data, response, manager, websocket)
 
+            elif data['request'] == 'new_topic':
+                response.update(new_topic(data, websocket))
+                await manager.send_personal_json(response, websocket)
+
+            elif data['request'] == 'activate_topic':
+                response.update(activate_topic(data, websocket))
+                await manager.send_personal_json(response, websocket)
+
+
             elif True:
 
                 print('SHIIIIIIIIIIIIT')
@@ -300,16 +309,27 @@ def new_user(data: dict[str:Any], websocket:Any) -> dict[str|Any]:
     return {'client_language': data['client_language']}
 
 
-def new_topic(data: dict[str:Any]) -> dict[str|Any]:
+def new_topic(data: dict[str:Any], websocket:Any) -> dict[str|Any]:
     """
     Show the session data
     """
     # get the client data
     client_data = user_db[data['client_id']]
 
+    stream_handler = StreamingLLMCallbackHandler(websocket)
+    observations = []
+    qa_chain, memory = get_agent(
+        stream_handler, websocket, observations, retriever=retrievers[0], language=client_data['client_language']
+    )
+
+
     # Create a new session
     client_data['sessions'].append({'title': None,
-                                    'conversation':[{"role": "system", "content": SYSTEM_MESSAGE}]
+                                    'conversation':[{"role": "system", "content": SYSTEM_MESSAGE}],
+                                    'stream_handler': stream_handler,
+                                    'observations': observations,
+                                    'qa_chain': qa_chain,
+                                    'memory': memory
                                     })
     # set the active session
     client_data['active_session'] = len(client_data['sessions']) - 1
@@ -344,7 +364,7 @@ def get_session_data(data: dict[str:Any]) -> dict[str|Any]:
                 'active_session': client_data['active_session'],
                 'session': client_data['sessions'][client_data['active_session']]}
     
-def activate_topic(data: dict[str:Any]) -> dict[str|Any]:
+def activate_topic(data: dict[str:Any],websocket:Any) -> dict[str|Any]:
     """
         Activate a topic
     """
@@ -360,8 +380,19 @@ def activate_topic(data: dict[str:Any]) -> dict[str|Any]:
     # return the session titles 
     # + the id of the active session
     # + the old conversation
+
+    messages = client_data['sessions'][client_data['active_session']]['memory'].chat_memory.messages
+    session_data = []
+    for x in messages:
+        if str(type(x)) == "<class 'langchain.schema.messages.HumanMessage'>":
+            session_data.append({'role': 'user', 'content': x.content})
+            if 'pdf' in x.content.lower():
+                session_data.append({'role': 'pdf', 'content': 'pdf'})
+        else:
+            session_data.append({'role': 'assistent', 'content': x.content})
+    
     return {'active_session': client_data['active_session'],
-            'session': client_data['sessions'][client_data['active_session']]}
+            'session': {'conversation': session_data}}
     
 async def new_message(data: dict[str:Any], response: dict[str:Any], manager: Any, websocket:Any) -> dict[str|Any]:
     """
@@ -421,6 +452,7 @@ async def new_message(data: dict[str:Any], response: dict[str:Any], manager: Any
         # client_data['sessions'][session_id]['title'] = text[:23].capitalize()
         client_data['sessions'][session_id]['title'] = msg[:23].capitalize()
         await websocket.send_json({'request': 'edit_title', 
+                                   'active_session': client_data['active_session'],
                                    'title_sessions': [x['title'] for x in client_data['sessions']],
                                    "session_ids" : list(range(len(client_data['sessions'])))})
 

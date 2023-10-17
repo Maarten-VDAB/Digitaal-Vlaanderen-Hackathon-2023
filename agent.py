@@ -13,7 +13,7 @@ from langchain.chat_models.openai import ChatOpenAI
 from langchain.prompts import MessagesPlaceholder
 from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 
-from tools import RAGTool, ContactInfoTool
+from tools import RAGTool, ContactInfoTool, PDFParserTool
 from prompts import SYSTEM_MESSAGE
 
 
@@ -38,7 +38,7 @@ def get_agent(
             retriever=retriever,
             websocket=websocket,
         ),
-        ContactInfoTool()
+        PDFParserTool()
     ]
     llm = ChatOpenAI(
         streaming=True,
@@ -49,7 +49,7 @@ def get_agent(
         request_timeout=270,
     )
 
-    system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='Dutch'))
+    system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='French'))
 
     agent = initialize_agent(
         tools=tools,

@@ -3,10 +3,14 @@
 
 <head>
     <title>VDAB - Hackathon 2023</title>
-    <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet">
+    <link href="https://vdabchat.azurewebsites.net/css/my_style.css" rel="stylesheet">
+
+    <!-- <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
-    <script src="{{ url_for('static', path='/js/language.js') }}"></script>
+    <!-- <script src="{{ url_for('static', path='/js/language.js') }}"></script> -->
+    <link href="https://vdabchat.azurewebsites.net/js/language.css'" rel="stylesheet">
+
 
     <script type='text/javascript'>
 
@@ -605,7 +609,7 @@
                 }
             }
 
-
+            console.log(pdfs)
             // send the user message to the chat-content
             if (msg.length > 0) {
                 user_message(msg)
@@ -725,36 +729,65 @@
         //
         // Image
         //
+        var pdfs = []
         function generateThumbnail(input) {
 
             if (input.files && input.files[0]) {
+                //     var reader = new FileReader();
+
+                //     reader.onload = function (e) {
+                //         // Create an image element for the thumbnail
+                //         var thumbnail = document.createElement('img');
+                //         thumbnail.src = "/static/images/pdf.png"
+                //         //thumbnail.src = e.target.result;
+
+                //         // Add the click event handler to open the image in a new tab
+
+                //         // thumbnail.addEventListener('click', function () {
+                //         //     // Open the image in a new tab
+                //         //     var newTab = window.open('', '_blank');
+                //         //     newTab.document.write('<html><body><img src="' + thumbnail.src + '"></body></html>');
+                //         //     newTab.document.close();
+                //         // });
+
+
+                //         // add a class to the thumbnail
+                //         thumbnail.classList.add('media-thumbnail');
+
+                //         // Add the thumbnail to the thumbnail container
+                //         document.getElementById('media-container').appendChild(thumbnail);
+                //     };
+
+                //     reader.readAsDataURL(input.files[0]);
+
                 var reader = new FileReader();
 
                 reader.onload = function (e) {
-                    // Create an image element for the thumbnail
-                    var thumbnail = document.createElement('img');
-                    thumbnail.src = "/static/images/pdf.png"
-                    //thumbnail.src = e.target.result;
+                    var pdfData = new Uint8Array(e.target.result);
 
-                    // Add the click event handler to open the image in a new tab
+                    // add pdfData to pdfs
+                    pdfs.push(pdfData)
 
-                    // thumbnail.addEventListener('click', function () {
-                    //     // Open the image in a new tab
-                    //     var newTab = window.open('', '_blank');
-                    //     newTab.document.write('<html><body><img src="' + thumbnail.src + '"></body></html>');
-                    //     newTab.document.close();
-                    // });
-
-
-                    // add a class to the thumbnail
-                    thumbnail.classList.add('media-thumbnail');
-
-                    // Add the thumbnail to the thumbnail container
-                    document.getElementById('media-container').appendChild(thumbnail);
+                    // Send the PDF data to your server (you need to define your own server endpoint)
+                    fetch('/upload-pdf', {
+                        method: 'POST',
+                        body: pdfData,
+                        headers: {
+                            'Content-Type': 'application/pdf', // Set the appropriate content type
+                        }
+                    })
+                        .then(response => {
+                            // Handle the response from the server if needed
+                        })
+                        .catch(error => {
+                            // Handle errors
+                        });
                 };
 
-                reader.readAsDataURL(input.files[0]);
+                reader.readAsArrayBuffer(input.files[0]);
             }
+
+
         }
         //
         // on document load

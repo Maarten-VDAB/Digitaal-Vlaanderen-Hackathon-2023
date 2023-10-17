@@ -37,7 +37,8 @@ def get_agent(
         RAGTool(
             retriever=retriever,
             websocket=websocket,
-        )
+        ),
+        ContactInfoTool()
     ]
     llm = ChatOpenAI(
         streaming=True,

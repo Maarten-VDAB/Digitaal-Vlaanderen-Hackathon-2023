@@ -104,8 +104,8 @@ class ContactInfoTool(BaseTool):
             The service number of VDAB is 0800 30 700. It is available everyday from 8am until 4h30pm.
             You can also chat with a person at the VDAB site https://www.vdab.be/contact.
             More information can also be found on the VDAB site. 
-            You can translate this site to your own language by following these steps:
-            TODO.'
+            You can translate this site to your own language by following the steps on this site:
+            https://www.vdab.be/anderstalig-hoogopgeleid'
         """
 
         
@@ -114,7 +114,7 @@ class PDFParserTool(BaseTool):
 
     name = "PDFParser"
     description = (
-        "useful for when a pdf is uploaded"
+        "use this when a pdf is uploaded"
     )
 
     def _run(

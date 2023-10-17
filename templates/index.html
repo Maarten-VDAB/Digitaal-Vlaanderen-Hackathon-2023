@@ -5,11 +5,13 @@
     <title>VDAB - Hackathon 2023</title>
     <!-- <link href="https://vdabhackathon.azurewebsites.net/css/my_style.css" rel="stylesheet"> -->
 
-    <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet">
+    <link href="https://vdabhackathon.azurewebsites.net/static/css/my_style.css" rel="stylesheet">
+
+    <!-- <link href="{{ url_for('static', path='/css/my_style.css') }}" rel="stylesheet"> -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="icon" type="image/x-icon" href="https://www.vdab.be/themes/vdab/vdab_basic/favicon.ico">
-    <script src="{{ url_for('static', path='/js/language.js') }}"></script>
-    <!-- <link href="https://vdabhackathon.azurewebsites.net/js/language.css'" rel="stylesheet"> -->
+    <!-- <script src="{{ url_for('static', path='/js/language.js') }}"></script> -->
+    <script src="https://vdabhackathon.azurewebsites.net/static/js/language.js"></script>
 
 
     <script type='text/javascript'>
@@ -732,6 +734,11 @@
         var pdfs = []
         function generateThumbnail(input) {
 
+            // if there more then 1 media-thumbnail stop
+            if (document.getElementsByClassName('media-thumbnail').length > 0) {
+                console.log('You can only send one image at a time')
+                return;
+            }
             if (input.files && input.files[0]) {
                 //     var reader = new FileReader();
 
@@ -788,6 +795,9 @@
                 // };
 
                 // reader.readAsArrayBuffer(input.files[0]);
+
+                // empty the input
+                $('#pdfInput').val('')
             }
 
 

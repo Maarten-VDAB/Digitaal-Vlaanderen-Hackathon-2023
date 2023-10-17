@@ -17,7 +17,7 @@ from tools import RAGTool, ContactInfoTool
 from prompts import SYSTEM_MESSAGE
 
 
-system_message = SystemMessage(content=SYSTEM_MESSAGE)
+system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='Dutch'))
 
 def get_agent(
     stream_handler: BaseCallbackManager,
@@ -48,7 +48,7 @@ def get_agent(
         request_timeout=270,
     )
 
-    system_message = SystemMessage(content=SYSTEM_MESSAGE)
+    system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='Dutch'))
 
     agent = initialize_agent(
         tools=tools,

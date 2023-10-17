@@ -506,4 +506,4 @@ if __name__ == "__main__":
     host, port = check_arg(sys.argv[1:])
     
     #start server   
-    uvicorn.run(app, host=host, port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port)

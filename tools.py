@@ -4,17 +4,17 @@ from langchain.tools import BaseTool
 from fastapi import WebSocket
 
 from functools import lru_cache
-from llava.model.builder import load_pretrained_model
+# from llava.model.builder import load_pretrained_model
 from PIL import Image
 import pdfplumber
 
-import torch
+# import torch
 
-from llava.conversation import conv_templates, SeparatorStyle
-from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
-from llava.mm_utils import tokenizer_image_token, KeywordsStoppingCriteria
-from llava.utils import disable_torch_init
-from transformers import TextStreamer
+# from llava.conversation import conv_templates, SeparatorStyle
+# from llava.constants import IMAGE_TOKEN_INDEX, DEFAULT_IMAGE_TOKEN, DEFAULT_IM_START_TOKEN, DEFAULT_IM_END_TOKEN
+# from llava.mm_utils import tokenizer_image_token, KeywordsStoppingCriteria
+# from llava.utils import disable_torch_init
+# from transformers import TextStreamer
 
 from schemas import ChatResponse
 

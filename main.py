@@ -3,7 +3,6 @@
 #---------------#
 import os
 import re
-os.environ["OPENAI_API_KEY"] = "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"
 from typing import Optional, Any, List
 import requests
 from contextlib import asynccontextmanager

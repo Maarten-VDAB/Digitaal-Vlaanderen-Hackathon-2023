@@ -16,14 +16,12 @@ from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 from tools import RAGTool, ContactInfoTool, PDFParserTool
 from prompts import SYSTEM_MESSAGE
 
-
-system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='Dutch'))
-
 def get_agent(
     stream_handler: BaseCallbackManager,
     websocket,
     observation,
     retriever,
+    language="English",
     memory=None,
     model="gpt-4",
 ) -> AgentExecutor:
@@ -49,7 +47,7 @@ def get_agent(
         request_timeout=270,
     )
 
-    system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language='French'))
+    system_message = SystemMessage(content=SYSTEM_MESSAGE.format(language=language))
 
     agent = initialize_agent(
         tools=tools,

@@ -3,7 +3,7 @@
 #---------------#
 import os
 import re
-os.environ["OPENAI_API_KEY"] = "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"
+os.environ["OPENAI_API_KEY"] = "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"
 from typing import Optional, Any, List
 import requests
 from contextlib import asynccontextmanager
@@ -283,7 +283,7 @@ def new_user(data: dict[str:Any], websocket:Any) -> dict[str|Any]:
     stream_handler = StreamingLLMCallbackHandler(websocket)
     observations = []
     qa_chain, memory = get_agent(
-        stream_handler, websocket, observations, retriever=retrievers[0]
+        stream_handler, websocket, observations, retriever=retrievers[0], language=data['client_language']
     )
 
 

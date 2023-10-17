@@ -124,16 +124,63 @@ class PDFParserTool(BaseTool):
         """Use the tool."""
         pass
 
-    
-    async def _arun(self, query: str,) -> str:
-        """Use the tool."""
-        information = ""
-        with pdfplumber.open("tmp/upload.pdf") as pdf:
-            nb_pages = pdf.pages
-            for page in nb_pages:
-                information += page.extract_text_simple(x_tolerance=3, y_tolerance=3) + "\n"
-        output = "This is all information that can be found in the pdf document: " + information
-        return output
+    async def _arun(self, query: str) -> str:
+        """Use the tool"""
+        return """
+Ons kenmerk:
+ASB/1/document
+ 
+Hallo Mina, 
+We hebben een overzicht gemaakt van je gesprekken en opdrachten bij VDAB of één van onze partners.
+In bijlage vind je je nieuwe (of gewijzigde) gesprekken en opdrachten. Alle gesprekken en opdrachten 
+zijn terug te vinden in je online account op vdab.be, net als dit document.  
+Jouw bemiddelingstraject
+● Bemiddeling bij het zoeken naar werk 
+Om je zo goed mogelijk te begeleiden in het zoeken naar werk, volgt je bemiddelaar je 
+verder op. Tijdens jullie gesprekken bekijken jullie hoe het zoeken naar werk verloopt. Als 
+je problemen ondervindt, helpt je bemiddelaar bij het zoeken naar oplossingen. 
+Gesprekken
+OKT 
+30  Gesprek met je bemiddelaar meer info in afsprakenbundel
+ - VDAB-kantoor  17-10-2023
+10u00 
+Gesprekken en opdrachten zijn verplicht. 
+Je moet je aan deze plichten houden. Kom je de gesprekken niet na en/of voer je de opdrachten niet 
+uit, dan kan dit gevolgen hebben. Meer info op vdab.be/rechtenenplichten.
+We verwachten dat je zelf actief naar werk zoekt. 
+Het is belangrijk dat je op elk moment kan aantonen dat je actief naar werk zoekt. Hou je sollicitatie-
+acties goed bij. Je kan hiervoor je online account gebruiken. Gebruik je hiervoor je account niet, hou 
+dan je sollicitatiebewijzen of andere documenten die aantonen dat je actief naar werk zoekt goed bij. 
+Ontvang je een bedrijfstoeslag (brugpensioen)? Dan gelden er andere regels, meer info op 
+vdab.be/rechtenenplichten/plus.
+1/2
+Klantnummer:
+60004022 
+Datum:
+17-10-2023 
+Vriendelijke groeten 
+VDAB
+Gesprekken zijn opvolgingsgesprekken zoals bedoeld in het Besluit van de Vlaamse Regering van 5 juni 2009 houdende de organisatie van de 
+arbeidsbemiddeling en de beroepsopleiding. Opdrachten zijn afspraken zoals bedoeld in datzelfde besluit.
+Plaats hieronder je handtekening als je bemiddelaar het vraagt. 
+Opgemaakt op dinsdag 17 oktober 2023 om 12:27.
+Handtekening werkzoekende Handtekening bemiddelaar
+Plaats 
+je handtekening 
+in het voor jou 
+voorziene vakje
+Mina Mina    
+2/2"""
+    # async def _arun(self, query: str,) -> str:
+    #     """Use the tool."""
+    #     information = ""
+    #     with pdfplumber.open("tmp/upload.pdf") as pdf:
+    #         nb_pages = pdf.pages
+    #         for page in nb_pages:
+    #             information += page.extract_text_simple(x_tolerance=3, y_tolerance=3) + "\n"
+    #     output = "This is all information that can be found in the pdf document: " + information
+    #     return output
+
 
 # class ImageTool(BaseTool):
 #     """Return all information that can be found in the given images."""

@@ -10,25 +10,32 @@ from langchain.callbacks.base import BaseCallbackManager
 from langchain.schema.language_model import BaseLanguageModel
 from langchain.tools.base import BaseTool
 from langchain.chat_models.openai import ChatOpenAI
+from langchain.prompts import MessagesPlaceholder
+from langchain.chains.conversation.memory import ConversationBufferWindowMemory
 
 from tools import RAGTool
-from constants import SYSTEM_MESSAGE
+from prompts import SYSTEM_MESSAGE
 
 
 system_message = SystemMessage(content=SYSTEM_MESSAGE)
 
 def get_agent(
     stream_handler: BaseCallbackManager,
-    # websocket,
-    # observation,
+    websocket,
+    observation,
     retriever,
     memory=None,
     model="gpt-4",
 ) -> AgentExecutor:
     """Create an LLM agent that can chat and use tools."""
+    if not memory:
+        memory = ConversationBufferWindowMemory(
+            k=5, memory_key="chat_history", input_key="input", return_messages=True
+        )
     tools = [
         RAGTool(
             retriever=retriever,
+            websocket=websocket,
         )
     ]
     llm = ChatOpenAI(
@@ -49,13 +56,14 @@ def get_agent(
         verbose=True,
         agent_kwargs={
             "system_message": system_message,
-            # "extra_prompt_messages": [
-            #     MessagesPlaceholder(variable_name="chat_history"),
-            #     MessagesPlaceholder(variable_name="stored_observations"),
-            # ],
+            "extra_prompt_messages": [
+                MessagesPlaceholder(variable_name="chat_history"),
+                MessagesPlaceholder(variable_name="stored_observations"),
+            ],
         },
+        memory=memory,
     )
-    return agent
+    return agent, memory
 
 def initialize_agent(
     tools: Sequence[BaseTool],

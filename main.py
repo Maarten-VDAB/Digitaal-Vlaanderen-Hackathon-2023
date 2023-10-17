@@ -2,43 +2,36 @@
 # Load packages #
 #---------------#
 from typing import Optional, Any, List
-import uvicorn
 import requests
-from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
-from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
-from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel
+from contextlib import asynccontextmanager
 import os
-
-# defaults
-import os
+import logging
 import sys
 import argparse
 import datetime
 import pathlib
 from pprint import pprint
 import base64
-import numpy as np
-from PIL import Image
 from io import BytesIO
-
 import json
-import os
-import openai
-from fastapi.websockets import WebSocket
 import time
 
-openai.api_type = "azure"
-openai.api_base = "https://tst-vdab.openai.azure.com/"
-openai.api_version = "2023-07-01-preview"
-# set the AZURE_OPENAI_KEY temporary to ABC
-#os.environ["AZURE_OPENAI_KEY"] = "ABC"
-openai.api_key = os.getenv("AZURE_OPENAI_KEY")
+import uvicorn
+from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi.websockets import WebSocket
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
+from fastapi.templating import Jinja2Templates
+from pydantic import BaseModel
+import numpy as np
+from PIL import Image
+import openai
 
-
-
-SYSTEM_MESSAGE = "You are an AI assistant that helps people find information."
+from constants import DB_PATH
+from rag.retrieval import VDABRetrieverClient
+from agent import get_agent
+from callback import StreamingLLMCallbackHandler
+from schemas import ChatResponse
 
 #---------------#
 # Open AI stuff #
@@ -79,15 +72,36 @@ def get_chatbot_response(msg: list[dict[str:Any]]):
 # Local DB #
 #----------#
 user_db = {}
-
+retrievers = []
 
 #-----------------#
 # FAST API - test #
 #-----------------#
-app = FastAPI(
-    title="Hackathon - Digitaal Vlaanderen"
-)
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    logging.info("Loading vectorstore")
+    retriever_client = VDABRetrieverClient(chunk_size=300, chunk_overlap=0)
+    # if the db is not built, build it
+    if not (
+        os.path.exists(DB_PATH / "store.pickle")
+        or os.path.exists(DB_PATH / "chroma_db")
+    ):
+        logging.info("Building vectorstore from scratch")
+        retriever_client.build_retriever()
+    retriever = retriever_client.load_retriever()
+    global retrievers
+    retrievers.append(retriever)
+    logging.info("Loaded vectorstore")
+    yield
+    # Clean up the ML models and release the resources
+    del retrievers
 
+
+app = FastAPI(
+    title="Hackathon - Digitaal Vlaanderen",
+    lifespan=lifespan)
+
+# app.config["PREFERRED_URL_SCHEME"] = "https"
 os.chdir(str(pathlib.Path(__file__).parent))
 app.mount("/static", StaticFiles(directory=f"static"), name="static")
 templates = Jinja2Templates(directory=f"templates")
@@ -126,44 +140,87 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
-@app.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
-    try:
-        while True:
+@app.websocket("/chat")
+async def websocket_endpoint(websocket: WebSocket):
+    await websocket.accept()
+    stream_handler = StreamingLLMCallbackHandler(websocket)
+    observations = []
+    qa_chain, memory = get_agent(
+        stream_handler, websocket, observations, retriever=retrievers[0]
+    )
+    while True:
+        try:
+            question = await websocket.receive_text()
+            # Receive and send back the client message
+            qa_chain, memory = get_agent(
+                stream_handler,
+                websocket,
+                observations,
+                retriever=retrievers[0],
+                memory=memory,
+            )
+            resp = ChatResponse(sender="you", message=question, type="stream")
+            await websocket.send_json(resp.dict())
 
-            # get the data
-            data = await websocket.receive_json()
-            data['client_id'] = client_id
+            # Construct a response
+            start_resp = ChatResponse(sender="bot", message="", type="start")
+            await websocket.send_json(start_resp.dict())
+            result = await qa_chain.acall(
+                {"input": question, "stored_observations": observations}
+            )
+            print(result)
+            end_resp = ChatResponse(sender="bot", message="", type="end")
+            await websocket.send_json(end_resp.dict())
+        except WebSocketDisconnect:
+            logging.info("websocket disconnect")
+            break
+        except Exception as e:
+            resp = ChatResponse(
+                sender="bot",
+                message="",
+                type="error",
+            )
+            logging.error(e)
+            await websocket.send_json(resp.dict())
 
-            # response placeholder
-            response = {'client_id': client_id, 'request': data['request']}
+# @app.websocket("/ws/{client_id}")
+# async def websocket_endpoint(websocket: WebSocket, client_id: int):
+#     await manager.connect(websocket)
+#     try:
+#         while True:
 
-            # send the data to the correct method
-            if data['request'] == 'new_user':
-                response.update(new_user(data))
-                await manager.send_personal_json(response, websocket)
+#             # get the data
+#             data = await websocket.receive_json()
+#             data['client_id'] = client_id
 
-            elif data['request'] == 'get_session_data':
-                response.update(get_session_data(data))
-                await manager.send_personal_json(response, websocket)
+#             # response placeholder
+#             response = {'client_id': client_id, 'request': data['request']}
 
-            elif data['request'] == 'new_topic':
-                response.update(new_topic(data))
-                await manager.send_personal_json(response, websocket)
+#             # send the data to the correct method
+#             if data['request'] == 'new_user':
+#                 response.update(new_user(data))
+#                 await manager.send_personal_json(response, websocket)
 
-            elif data['request'] == 'new_message':
-                await new_message(data, response, manager, websocket)
+#             elif data['request'] == 'get_session_data':
+#                 response.update(get_session_data(data))
+#                 await manager.send_personal_json(response, websocket)
+
+#             elif data['request'] == 'new_topic':
+#                 response.update(new_topic(data))
+#                 await manager.send_personal_json(response, websocket)
+
+#             elif data['request'] == 'new_message':
+#                 await new_message(data, response, manager, websocket)
             
-            elif data['request'] == 'activate_topic':
-                response.update(activate_topic(data))
-                await manager.send_personal_json(response, websocket)
+#             elif data['request'] == 'activate_topic':
+#                 response.update(activate_topic(data))
+#                 await manager.send_personal_json(response, websocket)
                 
 
-            # await manager.broadcast(f"Client #{client_id} says: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+#             # await manager.broadcast(f"Client #{client_id} says: {data}")
+#     except WebSocketDisconnect:
+#         manager.disconnect(websocket)
+#         await manager.broadcast(f"Client #{client_id} left the chat")
 
 
 
@@ -171,11 +228,18 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
 # Application #
 #-------------#
 @app.get("/")
-def read_root(request: Request):
-    """
-        Show the Demo web page.
-    """
-    return templates.TemplateResponse('index.html',{"request": request})
+async def get(request: Request):
+    if "OPENAI_API_KEY" not in os.environ:
+        raise HTTPException(status_code=404, detail="api key not found")
+    else:
+        if "WEBSITE_HOSTNAME" in os.environ:
+            website_name = os.environ["WEBSITE_HOSTNAME"]
+        else:
+            website_name = "localhost:8000"
+        return templates.TemplateResponse(
+            "index_dummy.html",
+            {"request": request, "insert_endpoint": "ws://" + website_name + "/chat"},
+        )
 
 
 #----------#

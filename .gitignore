@@ -1,6 +1,6 @@
 .venv/
 *.tmp
-/rag/data/
+
 /rag/db/
 /rag/files/
 
@@ -8,3 +8,14 @@
 
 .DS_Store
 *.zip
+
+.pyc
+
+__pycache__/
+
+.ipynb_checkpoints
+intranet_json
+intranet_translated_json
+output
+web_json
+web_translated_json

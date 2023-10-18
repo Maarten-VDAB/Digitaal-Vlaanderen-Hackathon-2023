@@ -56,7 +56,7 @@ class RAGTool(BaseTool):
         doc_links = [(doc.metadata.get("url", ""), doc.metadata.get("title", "link not found"))  for doc in docs]
         print([doc.metadata.keys() for doc in docs])
 
-        link_string = "See the following relevant links: <br><br>"
+        link_string = "Raadpleeg de volgende links voor meer info: <br>"
         for link, title in doc_links:
             print(link)
             print(title)
@@ -67,7 +67,7 @@ class RAGTool(BaseTool):
         end_resp = ChatResponse(sender="bot", message="", type="end")
         await self.websocket.send_json(end_resp.dict())
 
-        bot_resp = ChatResponse(sender="bot", message=link_string, type="stream")
+        bot_resp = ChatResponse(sender="bot", message=link_string + "<br>", type="stream")
         await self.websocket.send_json(bot_resp.dict())
 
         end_resp = ChatResponse(sender="bot", message="", type="end")

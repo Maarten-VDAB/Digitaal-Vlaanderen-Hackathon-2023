@@ -35,6 +35,7 @@ def get_agent(
         RAGTool(
             retriever=retriever,
             websocket=websocket,
+            language=language,
         ),
         PDFParserTool()
     ]

@@ -177,10 +177,10 @@ language_new_topic = {
 }
 
 welcome_message = {
-    "nl": 'Hallo, <br/>ik ben de chat-assistent van VDAB. <br/>Ik gebruik AI om u te helpen. <br/>Ik kan je vragen beantwoorden over werken in Vlaanderen.',
+    "nl": 'Hallo, ik ben de chat-assistent van VDAB. Ik gebruik AI om u te helpen. Ik kan je vragen beantwoorden over werken in Vlaanderen.',
     "fr": 'Bonjour, <br/>je suis l\'assistant de chat de VDAB. <br/>J\'utilise l\'IA pour vous aider. <br/>Je peux répondre à vos questions sur le travail en Flandre.',
     "de": 'Hallo, <br/>ich bin der Chat-Assistent von VDAB. <br/>Ich verwende KI, um Ihnen zu helfen. <br/>Ich kann Ihre Fragen zur Arbeit in Flandern beantworten.',
-    "en": 'Hello, <br/>I am the chat assistant of VDAB. <br/>I use AI to help you. <br/>I can answer your questions about working in Flanders.',
+    "en": 'Hello, I am the chat assistant of VDAB. I use AI to help you. I can answer your questions about working in Flanders.',
     "it": 'Ciao, <br/>sono l\'assistente di chat di VDAB. <br/>Uso l\'IA per aiutarti. <br/>Posso rispondere alle tue domande sul lavoro in Fiandre.',
     "sp": 'Hola, <br/>soy el asistente de chat de VDAB. <br/>Utilizo IA para ayudarte. <br/>Puedo responder tus preguntas sobre el trabajo en Flandes.',
     "po": 'Olá, <br/>sou o assistente de chat da VDAB. <br/>Eu uso IA para te ajudar. <br/>Posso responder suas perguntas sobre o trabalho na Flandres.',
@@ -193,7 +193,7 @@ welcome_message = {
     "ar": 'مرحبا، <br/>أنا مساعد الدردشة في VDAB. <br/>أستخدم AI لمساعدتك. <br/>يمكنني الإجابة على أسئلتك حول العمل في فلاندرز.',
     "hi": 'नमस्ते, <br/>मैं वीडीएबी का चैट सहायक हूं। <br/>मैं आपकी मदद करने के लिए AI का उपयोग करता हूं। <br/>मैं फ्लांडर्स में काम करने के बारे में आपके सवालों का जवाब दे सकता हूं।',
     "pl": 'Cześć, <br/>jestem asystentem czatu VDAB. <br/>Używam AI, aby ci pomóc. <br/>Mogę odpowiedzieć na twoje pytania dotyczące pracy w Flandrii.',
-    "uk": 'Привіт, <br/>я чат-асистент VDAB. <br/>Я використовую ШІ, щоб допомогти вам. <br/>Я можу відповісти на ваші питання про роботу в Фландрах.',
+    "uk": 'Привіт, я чат-асистент VDAB. Я використовую ШІ, щоб допомогти вам. Я можу відповісти на ваші питання про роботу в Фландрах.',
     "cs": 'Ahoj, <br/>jsem asistentem chatu VDAB. <br/>Používám AI, abych vám pomohl. <br/>Můžu odpovědět na vaše otázky týkající se práce ve Flandrech.',
     "hr": 'Bok, <br/>ja sam VDAB-ov asistent za razgovor. <br/>Koristim AI da vam pomognem. <br/>Mogu odgovoriti na vaša pitanja o radu u Flandriji.',
     "sk": 'Ahoj, <br/>som asistentom chatu VDAB. <br/>Používam AI, aby som vám pomohol. <br/>Môžem odpovedať na vaše otázky týkajúce sa práce vo Flandrii.',

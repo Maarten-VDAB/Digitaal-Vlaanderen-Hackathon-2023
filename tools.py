@@ -36,6 +36,7 @@ class RAGTool(BaseTool):
     )
     websocket: WebSocket | None
     retriever: ParentDocumentRetriever
+    language: str
 
     def _run(
         self,
@@ -54,9 +55,15 @@ class RAGTool(BaseTool):
         docs = self.retriever.get_relevant_documents(query)
         
         doc_links = [(doc.metadata.get("url", ""), doc.metadata.get("title", "link not found"))  for doc in docs]
-        print([doc.metadata.keys() for doc in docs])
-
-        link_string = "Raadpleeg de volgende links voor meer info: <br>"
+        
+        print(self.language)
+        
+        if self.language == "en":
+            link_string = "Please consult the following links for more info: <br>"
+        elif self.language == "nl":
+            link_string = "Raadpleeg de volgende links voor meer info: <br>"
+        else:
+            link_string = "Будь ласка, перейдіть за наступними посиланнями для отримання додаткової інформації: <br>"
         for link, title in doc_links:
             print(link)
             print(title)
